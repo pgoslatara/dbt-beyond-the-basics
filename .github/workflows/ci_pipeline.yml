@@ -24,42 +24,56 @@ jobs:
         with:
           python-version: "3.11"
 
-      - run: |
+      - name: Save stg GCP credentials to runner
+        run: |
           echo "${{ secrets.DBT_CICD_SA_SECRET_KEY_STG_BASE64_ENCODED }}" | base64 --decode >> ./service_account.json && \
           export GOOGLE_APPLICATION_CREDENTIALS="$(pwd)/service_account.json"
         if: ${{ github.event.pull_request.base.ref == 'stg' }}
 
-
-      - run: |
+      - name: Save prd GCP credentials to runner
+        run: |
           echo "${{ secrets.DBT_CICD_SA_SECRET_KEY_PRD_BASE64_ENCODED }}" | base64 --decode >> ./service_account.json && \
           export GOOGLE_APPLICATION_CREDENTIALS="$(pwd)/service_account.json"
         if: ${{ github.event.pull_request.base.ref == 'prd' }}
 
-      - run: |
+      - name: Authenticate with GCP
+        run: |
           gcloud auth activate-service-account dbt-cicd@beyond-basics-$DESTINATION_BRANCH.iam.gserviceaccount.com --key-file=./service_account.json && \
           gcloud config set project beyond-basics-$DESTINATION_BRANCH
 
-      - run: pip install -r requirements.txt -r requirements_dev.txt
+      - name: Install python packages
+        run: pip install -r requirements.txt -r requirements_dev.txt
 
-      - run: dbt compile --target $DESTINATION_BRANCH
+      - name: dbt compile
+        run: dbt compile --target $DESTINATION_BRANCH
 
-      - run: dbt docs generate --target $DESTINATION_BRANCH
+      - name: dbt docs generate
+        run: dbt docs generate --target $DESTINATION_BRANCH
 
-      - run: SKIP=dbt-compile,dbt-docs-generate pre-commit run -a
+      - name: pre-commit run -a
+        run: SKIP=dbt-compile,dbt-docs-generate pre-commit run -a
 
       - run: pytest ./tests/pytest -m no_deps
       - run: dbt deps
-      - run: dbt debug --target $DESTINATION_BRANCH
+      - name: dbt debug
+        run: dbt debug --target $DESTINATION_BRANCH
 
-      # Run dbt build
-      - run: dbt --warn-error build --fail-fast --target $DESTINATION_BRANCH
+      # Run dbt
+      - name: dbt build
+        run: dbt --warn-error build --fail-fast --target $DESTINATION_BRANCH
+
       - run: pytest ./tests/pytest -m run_results_json
-      - run: dbt source freshness --target $DESTINATION_BRANCH || true # source freshness is allowed to fail in CICD due to stale sources, the next command runs pytest on sources.json to validate the generated SQL
-      - run: pytest ./tests/pytest -m sources_json
-      - run: dbt --warn-error build --fail-fast --select config.materialized:incremental --target $DESTINATION_BRANCH
 
-      # Run script to gather high level stats
-      - run: if [ "$DESTINATION_BRANCH" == "stg" ]; then DBT_CICD_RUN="false" dbt compile --target $DESTINATION_BRANCH --threads 64; else echo "Only runs for PRs to stg"; fi # Need manifest.json as during Production runs and not during CICD runs
+      - name: dbt source freshness
+        run: dbt source freshness --target $DESTINATION_BRANCH || true # source freshness is allowed to fail in CI due to stale sources, the next command runs pytest on sources.json to validate the generated SQL (the prupose of this step)
+
+      - run: pytest ./tests/pytest -m sources_json
+
+      - name: dbt build incremental models
+        run: dbt --warn-error build --fail-fast --select config.materialized:incremental --target $DESTINATION_BRANCH
+
+      # Mart Monitor
+      - run: if [ "$DESTINATION_BRANCH" == "stg" ]; then DBT_CICD_RUN="false" dbt compile --target $DESTINATION_BRANCH --threads 64; else echo "Only runs for PRs to stg"; fi # Need manifest.json as exists during $DESTINATION_BRANCH runs and not during CI runs
       - run: if [ "$DESTINATION_BRANCH" == "stg" ]; then python ./scripts/mart_monitor_commenter.py --dbt_dataset $DBT_DATASET --pull_request_id ${{ github.event.number }} --target_branch $DESTINATION_BRANCH; else echo "Only runs for PRs to stg"; fi
 
   dev_container:

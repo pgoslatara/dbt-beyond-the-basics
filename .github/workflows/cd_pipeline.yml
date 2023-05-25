@@ -28,29 +28,36 @@ jobs:
         run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_OUTPUT
         id: extract_branch
 
-      - run: |
+      - name: Save stg GCP credentials to runner
+        run: |
           echo "${{ secrets.DBT_CICD_SA_SECRET_KEY_STG_BASE64_ENCODED }}" | base64 --decode >> ./service_account.json && \
           export GOOGLE_APPLICATION_CREDENTIALS="$(pwd)/service_account.json"
         if: ${{ steps.extract_branch.outputs.branch == 'stg' }}
 
-      - run: |
+      - name: Save prd GCP credentials to runner
+        run: |
           echo "${{ secrets.DBT_CICD_SA_SECRET_KEY_PRD_BASE64_ENCODED }}" | base64 --decode >> ./service_account.json && \
           export GOOGLE_APPLICATION_CREDENTIALS="$(pwd)/service_account.json"
         if: ${{ steps.extract_branch.outputs.branch == 'prd' }}
 
-      - run: |
+      - name: Authenticate with GCP
+        run: |
           gcloud auth activate-service-account dbt-cicd@beyond-basics-${{ steps.extract_branch.outputs.branch }}.iam.gserviceaccount.com --key-file=./service_account.json && \
           gcloud config set project beyond-basics-${{ steps.extract_branch.outputs.branch }}
 
-      - run: pip install -r requirements.txt -r requirements_dev.txt
+      - name: Install python packages
+        run: pip install -r requirements.txt -r requirements_dev.txt
 
       - run: dbt deps
 
-      - run: dbt debug --target ${{ steps.extract_branch.outputs.branch }}
+      - name: dbt debug
+        run: dbt debug --target ${{ steps.extract_branch.outputs.branch }}
 
-      - run: dbt seed --target ${{ steps.extract_branch.outputs.branch }}
+      - name: dbt seed
+        run: dbt seed --target ${{ steps.extract_branch.outputs.branch }}
 
-      - run: dbt compile --target ${{ steps.extract_branch.outputs.branch }} --threads 64
+      - name: dbt compile
+        run: dbt compile --target ${{ steps.extract_branch.outputs.branch }} --threads 64
 
       - run: python ./scripts/upload_manifest_to_gcs.py --target-branch ${{ steps.extract_branch.outputs.branch }}
 
