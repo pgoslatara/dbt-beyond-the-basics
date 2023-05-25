@@ -1,0 +1,14 @@
+
+version: 2
+
+# Source: https://github.com/dbt-labs/jaffle_shop/tree/main/seeds
+seeds:
+    - name: seed_stripe__payments
+      description: Sample payments
+      pre-hook:
+        - "SELECT 1 AS id"
+      columns:
+          - name: id
+            tests:
+                - unique
+                - not_null

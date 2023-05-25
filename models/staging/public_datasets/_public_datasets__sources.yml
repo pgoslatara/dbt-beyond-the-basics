@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: crypto_bitcoin
+    database: bigquery-public-data
+    schema: crypto_bitcoin
+    tables:
+     - name: blocks
+    freshness:
+      warn_after: {count: 25, period: hour}
+      error_after: {count: 48, period: hour}
+    loaded_at_field: "timestamp"

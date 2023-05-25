@@ -1,0 +1,68 @@
+name: 'beyond_basics'
+version: '1.0.0'
+config-version: 2
+
+profile: 'beyond_basics'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+require-dbt-version: [">=1.5.0", "<1.6.0"]
+
+models:
+  +labels:
+    created_by: dbt
+  beyond_basics:
+    +persist_docs:
+      relation: true
+      columns: true
+    intermediate:
+        materialized: view
+        schema: intermediate
+        tags: ['intermediate']
+        finance:
+          schema: intermediate_finance
+          tags: ['finance']
+    marts:
+        materialized: table
+        schema: marts
+        tags: ['marts']
+        crypto:
+          schema: marts_crypto
+          tags: ['crypto']
+        finance:
+          schema: marts_finance
+          tags: ['finance']
+    staging:
+        materialized: view
+        schema: staging
+        tags: ['staging']
+        public_datasets:
+          schema: staging_public_datasets
+          tags: ['public_datasets']
+        jaffle_shop:
+          schema: staging_jaffle_shop
+          tags: ['jaffle_shop']
+        stripe:
+          schema: staging_stripe
+          tags: ['stripe']
+
+
+seeds:
+  beyond_basics:
+    tags: ["seeds"]
+    jaffle_shop:
+      schema: seeds_jaffle_shop
+      tags: ['jaffle_shop']
+    stripe:
+      schema: seeds_stripe
+      tags: ['stripe']

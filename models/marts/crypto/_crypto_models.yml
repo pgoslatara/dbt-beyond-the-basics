@@ -1,0 +1,9 @@
+version: 2
+
+models:
+  - name: fct_bitcoin_blocks
+    columns:
+      - name: block_hash
+        tests:
+          - unique
+          - not_null

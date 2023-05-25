@@ -1,0 +1,41 @@
+{
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
+    },
+
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "eamodio.gitlens",
+                "innoverio.vscode-dbt-power-user",
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "redhat.vscode-yaml",
+                "samuelcolvin.jinjahtml",
+                "shd101wyy.markdown-preview-enhanced"
+            ],
+            "settings": {
+                "python.testing.pytestArgs": [
+                    "."
+                ],
+                "python.testing.unittestEnabled": false,
+                "python.testing.pytestEnabled": true,
+                "python.formatting.provider": "black",
+                "python.linting.mypyEnabled": true,
+                "python.linting.enabled": true
+            }
+        }
+    },
+
+    "portsAttributes": {
+        "8080": {
+            "label": "dbtDocs",
+            "onAutoForward": "notify"
+        }
+    },
+
+    "forwardPorts": [
+        8080
+    ]
+}

@@ -1,0 +1,21 @@
+
+version: 2
+
+# Source: https://github.com/dbt-labs/jaffle_shop/tree/main/seeds
+seeds:
+    - name: seed_jaffle_shop__customers
+      description: List of all customers, last name initialised for GDPR purposes
+      columns:
+          - name: id
+            description: "The primary key for this table"
+            tests:
+                - unique
+                - not_null
+
+    - name: seed_jaffle_shop__orders
+      description: Sample of 100 orders
+      columns:
+          - name: id
+            tests:
+                - unique
+                - not_null

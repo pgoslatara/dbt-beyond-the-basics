@@ -1,0 +1,90 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: check-added-large-files
+      - id: check-json
+      - id: check-ast
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: check-yaml
+        args: [--unsafe]
+      - id: debug-statements
+      - id: detect-private-key
+      - id: end-of-file-fixer
+        exclude: .+\.csv$
+      - id: no-commit-to-branch
+        name: JIRA ticket ID in branch
+        args: ['--pattern', '^((?![A-Z]+[-][0-9]+[-][\S]+).)*$']
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        args: ["--profile", "black", "--filter-files"]
+        name: isort (python)
+  - repo: https://github.com/ambv/black
+    rev: 23.3.0
+    hooks:
+      - id: black
+        name: Run black formatter
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.1.1
+    hooks:
+      - id: autoflake
+        args: ["--in-place", "--remove-all-unused-imports"]
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.4.0
+    hooks:
+      - id: pyupgrade
+        name: Check for code that can use new Python features
+  - repo: local
+    hooks:
+      - id: pytest-no-deps
+        name: pytest-no-deps
+        entry: pytest ./tests/pytest -m no_deps
+        language: system
+        pass_filenames: false
+        always_run: true
+  - repo: https://github.com/tconbeer/sqlfmt
+    rev: v0.18.1
+    hooks:
+      - id: sqlfmt
+  - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
+    rev: v1.1.0
+    hooks:
+    - id: dbt-compile
+      args: ["++threads", "64", "--"]
+    - id: dbt-docs-generate
+      args: ["--cmd-flags", "++no-compile", "++threads", "64"]
+    - id: check-model-has-properties-file
+      name: Check that all models are listed in a YAML file
+      files: ^models/intermediate/|^models/marts/|^models/staging/
+    - id: check-model-name-contract
+      args: [--pattern, "(int_).*"]
+      files: models/intermediate/
+    - id: check-model-name-contract
+      args: [--pattern, "(dim_|fct_|rpt_).*"]
+      files: models/marts/
+    - id: check-model-name-contract
+      args: [--pattern, "(base_|stg_).*"]
+      files: models/staging/
+    - id: check-model-name-contract
+      args: [--pattern, "^seed_.*csv$"]
+      files: models/seeds/
+  - repo: local
+    hooks:
+      - id: pytest-catalog-json
+        name: pytest-catalog-json
+        entry: pytest ./tests/pytest -m catalog_json
+        language: system
+        pass_filenames: false
+        always_run: true
+  - repo: local
+    hooks:
+      - id: pytest-manifest-json
+        name: pytest-manifest-json
+        entry: pytest ./tests/pytest -m manifest_json
+        language: system
+        pass_filenames: false
+        always_run: true

@@ -1,0 +1,3 @@
+export DBT_PROFILES_DIR="."
+export DBT_DATASET="dbt_femke"
+export GITHUB_TOKEN="github_pat..."

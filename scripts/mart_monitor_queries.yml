@@ -1,0 +1,38 @@
+query_data:
+
+  - check_name: dim_customers checks
+    model_name: dim_customers
+    query: |
+      select
+        '{{ env }}' as table_name,
+        count(*) as row_cnt,
+        count(distinct customer_id) as distinct_customer_id,
+        count(distinct first_name) as distinct_first_name,
+        count(distinct last_name) as distinct_last_name,
+        count(distinct first_order) as distinct_first_order,
+        count(distinct most_recent_order) as distinct_most_recent_order,
+        sum(number_of_orders) as sum_number_of_orders,
+        sum(customer_lifetime_value) as sum_customer_lifetime_value,
+      from {{ table_name }}
+
+  - check_name: fct_bitcoin_blocks checks
+    model_name: fct_bitcoin_blocks
+    query: |
+      select
+        '{{ env }}' as table_name,
+        count(*) as row_cnt,
+        count(distinct block_hash) as distinct_block_hash,
+        count(distinct merkle_root) as distinct_merkle_root,
+        count(distinct timestamp) as distinct_timestamp,
+        count(distinct nonce) as distinct_nonce,
+        count(distinct bits) as distinct_bits,
+        sum(size) as sum_size,
+        sum(stripped_size) as sum_stripped_size,
+        sum(weight) as sum_weight,
+        sum(number) as sum_number,
+        sum(version) as sum_version,
+        sum(transaction_count) as sum_transaction_count
+      from {{ table_name }}
+      where
+        timestamp <= timestamp_trunc(current_timestamp(), DAY)
+        and timestamp >= timestamp(date_sub(current_date(), interval 7 day))

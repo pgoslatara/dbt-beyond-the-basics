@@ -1,0 +1,29 @@
+beyond_basics:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      dataset: "{{ env_var('DBT_DATASET') }}"
+      job_retries: 3
+      location: US
+      method: oauth
+      project: beyond-basics-dev
+      threads: 64
+    stg:
+      type: bigquery
+      dataset: "{{ env_var('DBT_DATASET') }}"
+      job_retries: 3
+      keyfile: ./service_account.json
+      location: US
+      method: service-account
+      project: beyond-basics-stg
+      threads: 64
+    prd:
+      type: bigquery
+      dataset: "{{ env_var('DBT_DATASET') }}"
+      job_retries: 3
+      keyfile: ./service_account.json
+      location: US
+      method: service-account
+      project: beyond-basics-prd
+      threads: 64

@@ -1,0 +1,13 @@
+version: 2
+
+# models:
+#   - name: utilities__dim_date
+#     columns:
+#       - name: date_day
+#         tests:
+#           - not_null
+#           - unique
+#       - name: date_key
+#         tests:
+#           - not_null
+#           - unique

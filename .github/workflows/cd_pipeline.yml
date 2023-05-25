@@ -1,0 +1,57 @@
+name: cd_pipeline
+
+on:
+  push:
+    branches:
+      - stg
+      - prd
+
+env:
+  DBT_DATASET: "cicd"
+  DBT_PROFILES_DIR: "."
+  GITHUB_RUN_NUMBER: ${{ github.run_number }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  cd_pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_OUTPUT
+        id: extract_branch
+
+      - run: |
+          echo "${{ secrets.DBT_CICD_SA_SECRET_KEY_STG_BASE64_ENCODED }}" | base64 --decode >> ./service_account.json && \
+          export GOOGLE_APPLICATION_CREDENTIALS="$(pwd)/service_account.json"
+        if: ${{ steps.extract_branch.outputs.branch == 'stg' }}
+
+      - run: |
+          echo "${{ secrets.DBT_CICD_SA_SECRET_KEY_PRD_BASE64_ENCODED }}" | base64 --decode >> ./service_account.json && \
+          export GOOGLE_APPLICATION_CREDENTIALS="$(pwd)/service_account.json"
+        if: ${{ steps.extract_branch.outputs.branch == 'prd' }}
+
+      - run: |
+          gcloud auth activate-service-account dbt-cicd@beyond-basics-${{ steps.extract_branch.outputs.branch }}.iam.gserviceaccount.com --key-file=./service_account.json && \
+          gcloud config set project beyond-basics-${{ steps.extract_branch.outputs.branch }}
+
+      - run: pip install -r requirements.txt -r requirements_dev.txt
+
+      - run: dbt deps
+
+      - run: dbt debug --target ${{ steps.extract_branch.outputs.branch }}
+
+      - run: dbt seed --target ${{ steps.extract_branch.outputs.branch }}
+
+      - run: dbt compile --target ${{ steps.extract_branch.outputs.branch }} --threads 64
+
+      - run: python ./scripts/upload_manifest_to_gcs.py --target-branch ${{ steps.extract_branch.outputs.branch }}
+
+      - run: python ./scripts/run_dbt_backfill.py --target-branch ${{ steps.extract_branch.outputs.branch }}

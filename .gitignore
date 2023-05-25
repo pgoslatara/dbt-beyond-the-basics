@@ -1,0 +1,13 @@
+__pycache__/
+.env
+.envrc
+.pytest_cache/
+.state/
+.user.yml
+.vscode/
+*.ipynb
+dbt_packages/
+logs/
+service_account*.json
+target/
+venv*
