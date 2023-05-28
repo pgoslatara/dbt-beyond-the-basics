@@ -42,6 +42,11 @@ jobs:
       - name: Install python packages
         run: pip install -r requirements.txt
 
+      - name: dbt seed
+        run: dbt seed --target stg
+        env:
+          DBT_DATASET: "stg"
+
       - name: dbt build
         run: dbt build --target stg
         env:
@@ -70,6 +75,11 @@ jobs:
 
       - name: Install python packages
         run: pip install -r requirements.txt
+
+      - name: dbt seed
+        run: dbt seed --target prd
+        env:
+          DBT_DATASET: "prd"
 
       - name: dbt build
         run: dbt build --target prd
