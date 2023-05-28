@@ -15,15 +15,18 @@ jobs:
         with:
           python-version: "3.11"
 
-      - run: |
+      - name: Save stg GCP credentials to runner
+        run: |
           echo "${{ secrets.DBT_CICD_SA_SECRET_KEY_STG_BASE64_ENCODED }}" | base64 --decode >> ./service_account.json && \
           export GOOGLE_APPLICATION_CREDENTIALS="$(pwd)/service_account.json"
 
-      - run: |
+      - name: Authenticate with GCP
+        run: |
           gcloud auth activate-service-account dbt-cicd@beyond-basics-stg.iam.gserviceaccount.com --key-file=./service_account.json && \
           gcloud config set project beyond-basics-stg
 
-      - run: pip install -r requirements.txt -r requirements_dev.txt
+      - name: Install python packages
+        run: pip install -r requirements.txt -r requirements_dev.txt
 
       - run: python ./scripts/drop_unused_bq_resources.py --dataset_pattern "cicd_" --environment stg
 
@@ -37,14 +40,17 @@ jobs:
         with:
           python-version: "3.11"
 
-      - run: |
+      - name: Save prd GCP credentials to runner
+        run: |
           echo "${{ secrets.DBT_CICD_SA_SECRET_KEY_PRD_BASE64_ENCODED }}" | base64 --decode >> ./service_account.json && \
           export GOOGLE_APPLICATION_CREDENTIALS="$(pwd)/service_account.json"
 
-      - run: |
+      - name: Authenticate with GCP
+        run: |
           gcloud auth activate-service-account dbt-cicd@beyond-basics-prd.iam.gserviceaccount.com --key-file=./service_account.json && \
           gcloud config set project beyond-basics-prd
 
-      - run: pip install -r requirements.txt -r requirements_dev.txt
+      - name: Install python packages
+        run: pip install -r requirements.txt -r requirements_dev.txt
 
       - run: python ./scripts/drop_unused_bq_resources.py --dataset_pattern "cicd_" --environment prd
