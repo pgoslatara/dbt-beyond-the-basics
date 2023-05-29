@@ -222,7 +222,7 @@ def format_results(results: list) -> list:
                     ELSE '🔴'
                 END
                 || ' '
-                || CAST({metric} AS INTEGER)
+                || ROUND(CAST({metric} AS NUMERIC), 0)
                 || ' ('
                 || ROUND(diff_{metric}_pct, 2)
                 || '%)'
