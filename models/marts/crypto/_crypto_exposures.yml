@@ -1,0 +1,47 @@
+version: 2
+
+exposures:
+  - name: fct_bitcoin_blocks_hex
+    label: Hex - fct_bitcoin_blocks
+    type: analysis
+    depends_on:
+      - ref('fct_bitcoin_blocks')
+    owner:
+      name: Bobby Bobson
+      email: bob.bobson@beyondbasics.com
+
+  - name: fct_bitcoin_blocks_buy_bot
+    label: Buy Bot - fct_bitcoin_blocks
+    type: application
+    depends_on:
+      - ref('fct_bitcoin_blocks')
+    owner:
+      name: Chrissy Christie
+      email: chrissy.christie@beyondbasics.com
+
+  - name: fct_bitcoin_blocks_tableau
+    label: Tableau - fct_bitcoin_blocks
+    type: dashboard
+    depends_on:
+      - ref('fct_bitcoin_blocks')
+    owner:
+      name: Doug Douglas
+      email: doug.ouglas@beyondbasics.com
+
+  - name: fct_bitcoin_blocks_ml
+    label: MLflow - fct_bitcoin_blocks
+    type: ml
+    depends_on:
+      - ref('fct_bitcoin_blocks')
+    owner:
+      name: Emer Emerson
+      email: emer.emerson@beyondbasics.com
+
+  - name: fct_bitcoin_blocks_databricks
+    label: Databricks notebook - fct_bitcoin_blocks
+    type: notebook
+    depends_on:
+      - ref('fct_bitcoin_blocks')
+    owner:
+      name: Frank Franklin
+      email: frank.franklin@beyondbasics.com

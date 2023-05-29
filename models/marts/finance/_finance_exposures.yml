@@ -1,0 +1,10 @@
+version: 2
+
+exposures:
+  - name: dim_customers
+    type: dashboard
+    depends_on:
+      - ref('dim_customers')
+    owner:
+      name: Anna Anderson
+      email: anna.anderson@beyondbasics.com
