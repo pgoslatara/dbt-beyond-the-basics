@@ -9,7 +9,7 @@ on:
 env:
   DBT_CICD_RUN: "true"
   DESTINATION_BRANCH: "${{ github.event.pull_request.base.ref }}"
-  DBT_DATASET: "cicd_${{ github.event.number }}_${{ github.run_number }}_${{ github.sha }}"
+  DBT_DATASET: "ci_${{ github.event.number }}_${{ github.run_number }}_${{ github.sha }}"
   DBT_PROFILES_DIR: "."
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
