@@ -104,7 +104,7 @@ def compare_manifests_and_comment_impacted_models(
     for exposure in impacted_exposures:
         exposure_metadata = manifest_json["exposures"][exposure.replace(":", ".")]
         exposures_md_raw.append(
-            f"{emoji_map[exposure_metadata['type']]} {emoji_map[exposure_metadata['type']]['name']}|{exposure_metadata['label']}|{exposure_metadata['owner']['name']}|"
+            f"{emoji_map[exposure_metadata['type']]['symbol']} {emoji_map[exposure_metadata['type']]['name']}|{exposure_metadata['label']}|{exposure_metadata['owner']['name']}|"
         )
 
     exposures_md = "\n".join(sorted(exposures_md_raw))
