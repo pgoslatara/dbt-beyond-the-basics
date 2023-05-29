@@ -93,18 +93,18 @@ def compare_manifests_and_comment_impacted_models(
     )
     logging.info(f"{impacted_exposures=}")
     emoji_map = {
-        "analysis": "🕵",
-        "application": "📱",
-        "dashboard": "📊",
-        "ml": "🤖",
-        "notebook": "📓",
+        "analysis": {"name": "Analysis", "symbol": "🕵"},
+        "application": {"name": "Application", "symbol": "📱"},
+        "dashboard": {"name": "Dashboard", "symbol": "📊"},
+        "ml": {"name": "ML", "symbol": "🤖"},
+        "notebook": {"name": "Notebook", "symbol": "📓"},
     }
 
     exposures_md_raw = []
     for exposure in impacted_exposures:
         exposure_metadata = manifest_json["exposures"][exposure.replace(":", ".")]
         exposures_md_raw.append(
-            f"{emoji_map[exposure_metadata['type']]} {exposure_metadata['type'].upper()}|{exposure_metadata['label']}|{exposure_metadata['owner']['name']}|"
+            f"{emoji_map[exposure_metadata['type']]} {emoji_map[exposure_metadata['type']]['name']}|{exposure_metadata['label']}|{exposure_metadata['owner']['name']}|"
         )
 
     exposures_md = "\n".join(sorted(exposures_md_raw))
