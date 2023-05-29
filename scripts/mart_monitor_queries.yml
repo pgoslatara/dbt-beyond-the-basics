@@ -1,6 +1,6 @@
 query_data:
 
-  - check_name: dim_customers checks
+  - monitor_name: dim_customers monitor
     model_name: dim_customers
     query: |
       select
@@ -15,7 +15,7 @@ query_data:
         sum(customer_lifetime_value) as sum_customer_lifetime_value,
       from {{ table_name }}
 
-  - check_name: fct_bitcoin_blocks checks
+  - monitor_name: fct_bitcoin_blocks monitor
     model_name: fct_bitcoin_blocks
     query: |
       select

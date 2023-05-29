@@ -96,8 +96,8 @@ def test_model_marts_correct_locations() -> None:
 
 
 @pytest.mark.manifest_json
-def test_models_marts_must_have_checks(manifest_json: dict) -> None:
-    """As marts are exposed to external users we should have at least one check on them in `mart_monitor_queries.yml`."""
+def test_models_marts_must_have_monitorss(manifest_json: dict) -> None:
+    """As marts are exposed to external users we should have at least one monitor on them in `mart_monitor_queries.yml`."""
 
     with Path("./target/manifest.json").open() as f:
         manifest_json = json.load(f)
@@ -113,12 +113,12 @@ def test_models_marts_must_have_checks(manifest_json: dict) -> None:
     ) as f:
         query_data = yaml.safe_load(f)
 
-    models_with_checks = [x["model_name"] for x in query_data["query_data"]]
+    models_with_monitors = [x["model_name"] for x in query_data["query_data"]]
 
     for mart in mart_models:
         assert (
-            mart in models_with_checks
-        ), f"{mart} does not have an associated check in `mart_monitor_queries.yml`."
+            mart in models_with_monitors
+        ), f"{mart} does not have an associated monitor in `mart_monitor_queries.yml`."
 
 
 @pytest.mark.no_deps
