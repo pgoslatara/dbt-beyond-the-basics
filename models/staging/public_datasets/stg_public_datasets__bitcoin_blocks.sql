@@ -29,5 +29,3 @@ where
     {% endif %}
 
     and timestamp_month >= "2020-01-01"
-
-    and size > 1568783
