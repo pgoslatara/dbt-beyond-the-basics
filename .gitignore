@@ -5,6 +5,7 @@ __pycache__/
 .state/
 .user.yml
 .vscode/
+*.Identifier
 *.ipynb
 dbt_packages/
 logs/
