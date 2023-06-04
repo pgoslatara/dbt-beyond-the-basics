@@ -169,7 +169,7 @@ def fetch_results_from_bigquery(
         query = Template(query_template).render(
             env=env, table_name=f"{client.project}.{dataset}.{model_name}"
         )
-        logging.info(f"Running query on {client.project}...")
+        logging.info(f"Running query on {dataset} dataset on {client.project}...")
         logging.debug(f"{query=}")
 
         # If we change column names or add new models we need to tolerate these not being comparable across environments
@@ -181,6 +181,10 @@ def fetch_results_from_bigquery(
                 results.append(i)
         except (BadRequest, NotFound) as e:
             logging.info(f"{type(e)=}")
+
+            assert (
+                env != "cicd"
+            ), f"Mart monitor for {model_name} failed on CICD dataset, likely due to an invalid query."
 
         logging.debug(f"{results=}")
     return results
@@ -270,7 +274,7 @@ def run_monitor(
     """Run a monitor and post comments to GitHub PR"""
 
     logging.info(
-        f"{['monitor_name']}: Starting process for {monitor['monitor_name']}..."
+        f"{monitor['monitor_name']}: Starting process for {monitor['monitor_name']}..."
     )
     results = fetch_results_from_bigquery(
         query_template=monitor["query"],
