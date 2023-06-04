@@ -8,15 +8,16 @@
 
 select
     `hash` as block_hash,
+    timestamp as created_at,
     date(timestamp) as timestamp_date,
-    * except (`hash`, timestamp_month)
+    * except (`hash`, timestamp, timestamp_month)
 from {{ source('crypto_bitcoin', 'blocks') }}
 where
     timestamp <= timestamp_trunc(current_timestamp(), day)
 
     {% if is_incremental() %}
 
-        and timestamp >= timestamp(date_sub(current_date(), interval 1 day))
+        and created_at >= timestamp(date_sub(current_date(), interval 1 day))
 
     {% endif %}
 
