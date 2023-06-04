@@ -23,7 +23,7 @@ query_data:
         count(*) as row_cnt,
         count(distinct block_hash) as distinct_block_hash,
         count(distinct merkle_root) as distinct_merkle_root,
-        count(distinct timestamp) as distinct_timestamp,
+        count(distinct created_at) as distinct_created_at,
         count(distinct nonce) as distinct_nonce,
         count(distinct bits) as distinct_bits,
         sum(size) as sum_size,
@@ -34,5 +34,5 @@ query_data:
         sum(transaction_count) as sum_transaction_count
       from {{ table_name }}
       where
-        timestamp <= timestamp_trunc(current_timestamp(), DAY)
-        and timestamp >= timestamp(date_sub(current_date(), interval 7 day))
+        created_at <= timestamp_trunc(current_timestamp(), DAY)
+        and created_at >= timestamp(date_sub(current_date(), interval 7 day))
