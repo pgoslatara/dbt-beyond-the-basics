@@ -117,23 +117,23 @@ def download_manifest_json(
             r"uploaded_at=[0-9 -.:]*\/github_run_number=([0-9]*)\/manifest\.json"
         ).match(blob.name)
         if "group" in dir(re_compile):
-            valid_blobs.append({"blob": blob, "build_number": re_compile[1]})
+            valid_blobs.append({"blob": blob, "build_number": int(re_compile[1])})
 
     logging.info(f"Found {len(valid_blobs)} valid blobs...")
 
     if len(valid_blobs) == 0:
         raise ManifestInitRunError
     else:
-        sorted_blobs = sorted(
-            valid_blobs, key=lambda d: int(d["build_number"]), reverse=True
-        )
+        build_numbers = sorted([x["build_number"] for x in valid_blobs], reverse=True)
 
         if version == "latest":
             index = 0
         elif version == "previous":
             index = 1
 
-        manifest_blob = sorted_blobs[index]["blob"]
+        manifest_blob = [
+            x["blob"] for x in valid_blobs if x["build_number"] == build_numbers[index]
+        ][0]
         Path(destination_file_name[: destination_file_name.rfind("/")]).mkdir(
             parents=True, exist_ok=True
         )
