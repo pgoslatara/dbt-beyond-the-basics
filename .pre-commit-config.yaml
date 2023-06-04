@@ -42,7 +42,7 @@ repos:
     hooks:
       - id: pytest-no-deps
         name: pytest-no-deps
-        entry: pytest ./tests/pytest -m no_deps
+        entry: pytest ./tests/pytest -m no_deps -n 5
         language: system
         pass_filenames: false
         always_run: true
@@ -76,7 +76,7 @@ repos:
     hooks:
       - id: pytest-catalog-json
         name: pytest-catalog-json
-        entry: pytest ./tests/pytest -m catalog_json
+        entry: pytest ./tests/pytest -m catalog_json -n 5
         language: system
         pass_filenames: false
         always_run: true
@@ -84,7 +84,7 @@ repos:
     hooks:
       - id: pytest-manifest-json
         name: pytest-manifest-json
-        entry: pytest ./tests/pytest -m manifest_json
+        entry: pytest ./tests/pytest -m manifest_json -n 5
         language: system
         pass_filenames: false
         always_run: true
