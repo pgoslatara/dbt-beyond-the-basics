@@ -17,7 +17,7 @@ where
 
     {% if is_incremental() %}
 
-        and created_at >= timestamp(date_sub(current_date(), interval 1 day))
+        and timestamp >= timestamp(date_sub(current_date(), interval 1 day))
 
     {% endif %}
 
