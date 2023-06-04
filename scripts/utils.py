@@ -125,7 +125,7 @@ def download_manifest_json(
         raise ManifestInitRunError
     else:
         sorted_blobs = sorted(
-            valid_blobs, key=lambda d: d["build_number"], reverse=True
+            valid_blobs, key=lambda d: int(d["build_number"]), reverse=True
         )
 
         if version == "latest":
