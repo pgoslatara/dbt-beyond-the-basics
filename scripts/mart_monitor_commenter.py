@@ -104,7 +104,7 @@ def compare_manifests_and_comment_impacted_models(
     for exposure in impacted_exposures:
         exposure_metadata = manifest_json["exposures"][exposure.replace(":", ".")]
         exposures_md_raw.append(
-            f"{emoji_map[exposure_metadata['type']]} {exposure_metadata['type']}|{exposure_metadata['name']}|{exposure_metadata['owner']['name']}|"
+            f"{emoji_map[exposure_metadata['type']]} {exposure_metadata['type'].upper()}|{exposure_metadata['label']}|{exposure_metadata['owner']['name']}|"
         )
 
     exposures_md = "\n".join(sorted(exposures_md_raw))
@@ -169,7 +169,7 @@ def fetch_results_from_bigquery(
         query = Template(query_template).render(
             env=env, table_name=f"{client.project}.{dataset}.{model_name}"
         )
-        logging.info(f"Running query on {client.project}...")
+        logging.info(f"Running query on {dataset} dataset on {client.project}...")
         logging.debug(f"{query=}")
 
         # If we change column names or add new models we need to tolerate these not being comparable across environments
@@ -181,6 +181,10 @@ def fetch_results_from_bigquery(
                 results.append(i)
         except (BadRequest, NotFound) as e:
             logging.info(f"{type(e)=}")
+
+            assert (
+                env != "cicd"
+            ), f"Mart monitor for {model_name} failed on CICD dataset, likely due to an invalid query."
 
         logging.debug(f"{results=}")
     return results
@@ -222,7 +226,7 @@ def format_results(results: list) -> list:
                     ELSE '🔴'
                 END
                 || ' '
-                || CAST({metric} AS NUMERIC)
+                || ROUND(CAST({metric} AS NUMERIC), 0)
                 || ' ('
                 || ROUND(diff_{metric}_pct, 2)
                 || '%)'
@@ -264,26 +268,28 @@ def format_results(results: list) -> list:
     return data
 
 
-def run_check(
-    check: dict, dbt_dataset: str, pull_request_id: int, target_branch: str
+def run_monitor(
+    monitor: dict, dbt_dataset: str, pull_request_id: int, target_branch: str
 ) -> None:
-    """Run a check and post comments to GitHub PR"""
+    """Run a monitor and post comments to GitHub PR"""
 
     logging.info(
-        f"{check['check_name']}: Starting process for {check['check_name']}..."
+        f"{monitor['monitor_name']}: Starting process for {monitor['monitor_name']}..."
     )
     results = fetch_results_from_bigquery(
-        query_template=check["query"],
+        query_template=monitor["query"],
         cicd_dataset=dbt_dataset,
-        model_name=check["model_name"],
+        model_name=monitor["model_name"],
     )
     data = format_results(results)
-    markdown_table = transform_list_to_markdown(data, check["check_name"])
-    delete_github_pr_bot_comments(pull_request_id, target_branch, check["check_name"])
+    markdown_table = transform_list_to_markdown(data, monitor["monitor_name"])
+    delete_github_pr_bot_comments(
+        pull_request_id, target_branch, monitor["monitor_name"]
+    )
     send_github_pr_comment(pull_request_id=pull_request_id, message=markdown_table)
 
 
-def transform_list_to_markdown(input: list, check_name: str) -> str:
+def transform_list_to_markdown(input: list, monitor_name: str) -> str:
     """Transform a list into a table formatted as Markdown"""
 
     formatted_input = "".join(
@@ -297,12 +303,12 @@ def transform_list_to_markdown(input: list, check_name: str) -> str:
         value_matrix = [["👍👍"]]
 
     writer = pytablewriter.MarkdownTableWriter(
-        table_name=check_name,
+        table_name=monitor_name,
         headers=headers,
         value_matrix=value_matrix,
     )
     markdown_table = writer.__str__()
-    logging.debug(f"{check_name}: {markdown_table=}")
+    logging.debug(f"{monitor_name}: {markdown_table=}")
 
     return markdown_table
 
@@ -319,7 +325,7 @@ def fetch_query_data_from_yml() -> List[Mapping[str, str]]:
 
     data = query_data["query_data"]
     for i in data:
-        assert list(i.keys()) == ["check_name", "model_name", "query"]
+        assert list(i.keys()) == ["monitor_name", "model_name", "query"]
 
     return data
 
@@ -343,16 +349,16 @@ def main() -> None:
     ):  # i.e. on inital run no manifest.json to compare with so need to skip
         try:
             if target_branch == "stg":
-                # This check only runs for PRs to `stg` branch
-                check_yaml = fetch_query_data_from_yml()
+                # Monitors only runs for PRs to `stg` branch
+                monitor_yaml = fetch_query_data_from_yml()
 
-                # Run checks in parallel
+                # Run monitors in parallel
                 pool = ThreadPool(8)
                 pool.starmap(
-                    run_check,
+                    run_monitor,
                     [
-                        (check, dbt_dataset, pull_request_id, target_branch)
-                        for check in check_yaml
+                        (monitor, dbt_dataset, pull_request_id, target_branch)
+                        for monitor in monitor_yaml
                     ],
                 )
 

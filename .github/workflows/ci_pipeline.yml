@@ -9,7 +9,7 @@ on:
 env:
   DBT_CICD_RUN: "true"
   DESTINATION_BRANCH: "${{ github.event.pull_request.base.ref }}"
-  DBT_DATASET: "cicd_${{ github.event.number }}_${{ github.run_number }}_${{ github.sha }}"
+  DBT_DATASET: "ci_${{ github.event.number }}_${{ github.run_number }}_${{ github.sha }}"
   DBT_PROFILES_DIR: "."
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -53,7 +53,7 @@ jobs:
       - name: pre-commit run -a
         run: SKIP=dbt-compile,dbt-docs-generate pre-commit run -a
 
-      - run: pytest ./tests/pytest -m no_deps
+      - run: pytest ./tests/pytest -m no_deps -n 5
       - run: dbt deps
       - name: dbt debug
         run: dbt debug --target $DESTINATION_BRANCH
@@ -62,12 +62,12 @@ jobs:
       - name: dbt build
         run: dbt --warn-error build --fail-fast --target $DESTINATION_BRANCH
 
-      - run: pytest ./tests/pytest -m run_results_json
+      - run: pytest ./tests/pytest -m run_results_json -n 5
 
       - name: dbt source freshness
         run: dbt source freshness --target $DESTINATION_BRANCH || true # source freshness is allowed to fail in CI due to stale sources, the next command runs pytest on sources.json to validate the generated SQL (the prupose of this step)
 
-      - run: pytest ./tests/pytest -m sources_json
+      - run: pytest ./tests/pytest -m sources_json -n 5
 
       - name: dbt build incremental models
         run: dbt --warn-error build --fail-fast --select config.materialized:incremental --target $DESTINATION_BRANCH

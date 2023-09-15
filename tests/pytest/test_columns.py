@@ -41,3 +41,17 @@ def test_column_names_seeds() -> None:
             assert (
                 col == re.compile(regex_pattern).match(col)[0]
             ), f"Column '{col}' in {f.name} does not align with the existing naming convention ({regex_pattern})."
+
+
+@pytest.mark.catalog_json
+def test_column_names_seeds(catalog_json: dict) -> None:
+    """
+    TIMESTAMP columns must end in "_at".
+    """
+
+    for k, v in catalog_json["nodes"].items():
+        for col, properties in v["columns"].items():
+            if properties["type"] == "TIMESTAMP":
+                assert col.endswith(
+                    "_at"
+                ), f"Column `{col}` in `{k}` has a type of TIMESTAMP but does not end with `_at`."

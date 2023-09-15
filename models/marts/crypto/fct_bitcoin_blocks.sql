@@ -2,7 +2,7 @@
     config(
         materialized = 'incremental',
         incremental_strategy = 'insert_overwrite',
-        partition_by = {'data_type': 'timestamp', 'field': 'timestamp', 'granularity': 'day'}
+        partition_by = {'data_type': 'timestamp', 'field': 'created_at', 'granularity': 'day'}
     )
 }}
 

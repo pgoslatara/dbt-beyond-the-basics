@@ -24,6 +24,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: stg
 
       - uses: actions/setup-python@v4
         with:
@@ -42,6 +44,11 @@ jobs:
       - name: Install python packages
         run: pip install -r requirements.txt
 
+      - name: dbt seed
+        run: dbt seed --target stg
+        env:
+          DBT_DATASET: "stg"
+
       - name: dbt build
         run: dbt build --target stg
         env:
@@ -53,6 +60,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: prd
 
       - uses: actions/setup-python@v4
         with:
@@ -70,6 +79,11 @@ jobs:
 
       - name: Install python packages
         run: pip install -r requirements.txt
+
+      - name: dbt seed
+        run: dbt seed --target prd
+        env:
+          DBT_DATASET: "prd"
 
       - name: dbt build
         run: dbt build --target prd
