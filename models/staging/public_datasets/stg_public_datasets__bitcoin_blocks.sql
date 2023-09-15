@@ -6,7 +6,7 @@
     )
 }}
 
-select
+select distinct
     `hash` as block_hash,
     timestamp as created_at,
     date(timestamp) as timestamp_date,
