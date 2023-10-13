@@ -4,7 +4,7 @@ import os
 import re
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Mapping, Optional, Union
+from typing import Any, List, Mapping, Optional, Union
 
 import requests
 from dbt.cli.main import dbtRunner
@@ -234,7 +234,7 @@ def get_gcp_auth_clients(env: str) -> dict:
 
 def run_dbt_command(
     dbt_command: str,
-) -> None:
+) -> List:
     """Runs a dbt command.
 
     Args:
@@ -245,6 +245,8 @@ def run_dbt_command(
 
     if res.exception:
         raise RuntimeError("dbt command did not complete successfully.")
+
+    return list(res.result)
 
 
 def send_github_pr_comment(pull_request_id: int, message: str) -> str:

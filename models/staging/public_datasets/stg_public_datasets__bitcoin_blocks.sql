@@ -25,7 +25,7 @@ where
     {% if not target.name in ['stg', 'prod'] or env_var('DBT_CICD_RUN', 'false') == 'true' %}
 
         and timestamp_month
-        >= date_trunc(date_sub(current_date(), interval 2 month), month)
+        >= date_trunc(date_sub(current_date(), interval 1 month), month)
 
     {% endif %}
 
