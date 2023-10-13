@@ -61,8 +61,7 @@ def run_dbt_backfill(env: str) -> None:
 
         # Fully refresh modified nodes and their downstream dependencies
         run_dbt_command(
-            f"dbt build --select state:modified+,package:beyond_basics --state ./.state --full-refresh --target {env}",
-            foreground=True,  # prints logs in GitHub workflow in real time to help with monitoring and logging
+            f"dbt build --select state:modified+,package:beyond_basics --state ./.state --full-refresh --target {env}"
         )
 
         send_github_pr_comment(
