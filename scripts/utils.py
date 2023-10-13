@@ -4,13 +4,13 @@ import os
 import re
 from datetime import datetime
 from pathlib import Path
-from typing import Any, List, Mapping, Optional, Union
+from typing import Any, Mapping, Optional, Union
 
 import requests
+from dbt.cli.main import dbtRunner
 from google.cloud import bigquery, storage
 from google.oauth2 import service_account
 from retry import retry
-from sh import dbt
 
 
 class GitHubAPIRateLimitError(Exception):
@@ -232,19 +232,19 @@ def get_gcp_auth_clients(env: str) -> dict:
     }
 
 
-def run_dbt_shell_command(
-    command: str, foreground: bool = False
-) -> Optional[Union[List[str], None]]:
-    """
-    Runs dbt on the command line anre returns the output as a non-null newline-delimited list of strings
+def run_dbt_command(
+    dbt_command: str,
+) -> None:
+    """Runs a dbt command.
+
+    Args:
+        dbt_command (str): The dbt command to be run, e.g. "dbt parse"
     """
 
-    logging.info(f"Running: {command}...")
+    res = dbtRunner().invoke(dbt_command.split(" ")[1:])
 
-    if foreground is False:
-        return [x for x in dbt(command.split(" ")[1:]).split("\n") if x != ""]
-    else:
-        dbt(command.split(" ")[1:], _fg=foreground)
+    if res.exception:
+        raise RuntimeError("dbt command did not complete successfully.")
 
 
 def send_github_pr_comment(pull_request_id: int, message: str) -> str:
