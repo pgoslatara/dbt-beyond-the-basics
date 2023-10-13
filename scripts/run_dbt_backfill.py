@@ -32,15 +32,10 @@ def run_dbt_backfill(env: str) -> None:
 
     # List modified nodes
     modified_nodes_raw = run_dbt_command(
-        f"dbt ls --select state:modified,package:beyond_basics --state ./.state --resource-type model --target {env}"
+        f"dbt --quiet ls --select state:modified,package:beyond_basics --state ./.state --resource-type model --target {env}"
     )
 
-    if (
-        modified_nodes_raw[0].find(
-            "The selection criterion 'state:modified,package:beyond_basics' does not match any nodes"
-        )
-        == -1
-    ):
+    if len(modified_nodes_raw) > 0:
         modified_nodes_clean = [x.split(".")[-1] for x in modified_nodes_raw]
         logging.info(f"{modified_nodes_clean=}")
 
