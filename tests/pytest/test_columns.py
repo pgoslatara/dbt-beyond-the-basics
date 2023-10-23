@@ -46,7 +46,8 @@ def test_column_names_seeds() -> None:
 @pytest.mark.catalog_json
 def test_column_names_dates(catalog_json: dict) -> None:
     """
-    Columns ending in "_date" must be of type DATE.
+        Columns ending in "_date" must be of type DATE.
+    def test_column_names_is_boolean(catalog_json: dict) -> None:
     """
 
     for k, v in catalog_json["nodes"].items():
@@ -58,7 +59,21 @@ def test_column_names_dates(catalog_json: dict) -> None:
 
 
 @pytest.mark.catalog_json
-def test_column_names_seeds(catalog_json: dict) -> None:
+def test_column_names_is_boolean(catalog_json: dict) -> None:
+    """
+    Columns starting with "is_" must be of type boolean.
+    """
+
+    for k, v in catalog_json["nodes"].items():
+        for col, properties in v["columns"].items():
+            if properties["name"].startswith("is_"):
+                assert (
+                    properties["type"] == "BOOL"
+                ), f"Column `{col}` in `{k}` starts with 'is_' but is not of type BOOLEAN."
+
+
+@pytest.mark.catalog_json
+def test_column_names_timestamps(catalog_json: dict) -> None:
     """
     TIMESTAMP columns must end in "_at".
     """
