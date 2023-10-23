@@ -44,6 +44,20 @@ def test_column_names_seeds() -> None:
 
 
 @pytest.mark.catalog_json
+def test_column_names_dates(catalog_json: dict) -> None:
+    """
+    Columns ending in "_date" must be of type DATE.
+    """
+
+    for k, v in catalog_json["nodes"].items():
+        for col, properties in v["columns"].items():
+            if properties["name"].endswith("_date"):
+                assert (
+                    properties["type"] == "DATE"
+                ), f"Column `{col}` in `{k}` ends with `_date` but is not of type DATE."
+
+
+@pytest.mark.catalog_json
 def test_column_names_seeds(catalog_json: dict) -> None:
     """
     TIMESTAMP columns must end in "_at".
