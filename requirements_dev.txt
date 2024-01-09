@@ -1,4 +1,4 @@
-black==23.3.0
+black==23.12.1
 duckdb
 flake8
 GitPython
