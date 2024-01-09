@@ -7,7 +7,7 @@ from utils import (
     ManifestInitRunError,
     call_github_api,
     download_manifest_json,
-    run_dbt_shell_command,
+    run_dbt_command,
     send_github_pr_comment,
     set_logging_options,
 )
@@ -31,16 +31,11 @@ def run_dbt_backfill(env: str) -> None:
     )
 
     # List modified nodes
-    modified_nodes_raw = run_dbt_shell_command(
-        f"dbt ls --select state:modified,package:beyond_basics --state ./.state --resource-type model --target {env}"
+    modified_nodes_raw = run_dbt_command(
+        f"dbt --quiet ls --select state:modified,package:beyond_basics --state ./.state --resource-type model --target {env}"
     )
 
-    if (
-        modified_nodes_raw[0].find(
-            "The selection criterion 'state:modified,package:beyond_basics' does not match any nodes"
-        )
-        == -1
-    ):
+    if len(modified_nodes_raw) > 0:
         modified_nodes_clean = [x.split(".")[-1] for x in modified_nodes_raw]
         logging.info(f"{modified_nodes_clean=}")
 
@@ -60,9 +55,8 @@ def run_dbt_backfill(env: str) -> None:
         )
 
         # Fully refresh modified nodes and their downstream dependencies
-        run_dbt_shell_command(
-            f"dbt build --select state:modified+,package:beyond_basics --state ./.state --full-refresh --target {env}",
-            foreground=True,  # prints logs in GitHub workflow in real time to help with monitoring and logging
+        run_dbt_command(
+            f"dbt build --select state:modified+,package:beyond_basics --state ./.state --full-refresh --target {env}"
         )
 
         send_github_pr_comment(
@@ -99,7 +93,7 @@ def main() -> None:
 
     if (
         "init_run" not in locals()
-    ):  # i.e. on inital run no manifest.json to compare with so need to skip
+    ):  # i.e. on initial run no manifest.json to compare with so need to skip
         run_dbt_backfill(target_branch)
 
 

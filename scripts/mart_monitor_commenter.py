@@ -18,7 +18,7 @@ from utils import (
     delete_github_pr_bot_comments,
     download_manifest_json,
     get_gcp_auth_clients,
-    run_dbt_shell_command,
+    run_dbt_command,
     send_github_pr_comment,
     set_logging_options,
 )
@@ -66,7 +66,7 @@ def compare_manifests_and_comment_impacted_models(
     )
 
     directly_impacted_models = sorted(
-        run_dbt_shell_command(
+        run_dbt_command(
             f"dbt --quiet ls --select state:modified --state ./.state --resource-type model --target {env}"
         )
     )
@@ -74,7 +74,7 @@ def compare_manifests_and_comment_impacted_models(
     direct_md = "\n".join([f'| {x.split(".")[-1]} |' for x in directly_impacted_models])
 
     indirectly_impacted_models = sorted(
-        run_dbt_shell_command(
+        run_dbt_command(
             f"dbt --quiet ls --select state:modified+ --state ./.state --resource-type model --target {env}"
         )
     )
@@ -87,7 +87,7 @@ def compare_manifests_and_comment_impacted_models(
         manifest_json = json.load(f)
 
     impacted_exposures = sorted(
-        run_dbt_shell_command(
+        run_dbt_command(
             f"dbt --quiet ls --select state:modified+ --state ./.state --resource-type exposure --target {env}"
         )
     )
