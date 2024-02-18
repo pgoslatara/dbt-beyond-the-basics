@@ -6,6 +6,44 @@ sources:
     schema: crypto_bitcoin
     tables:
      - name: blocks
+       description: >
+        All blocks.
+        Data is exported using https://github.com/blockchain-etl/bitcoin-etl
+       columns:
+        - name: >
+            `hash`
+          description: Hash of this block
+          tests:
+            - not_null
+            - unique
+        - name: size
+          description: The size of block data in bytes
+        - name: stripped_size
+          description: The size of block data in bytes excluding witness data
+        - name: weight
+          description: Three times the base size plus the total size. https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki
+        - name: number
+          description: The number of the block
+        - name: version
+          description: Protocol version specified in block header
+        - name: merkle_root
+          description: The root node of a Merkle tree, where leaves are transaction hashes
+        - name: timestamp
+          description: Block creation timestamp specified in block header
+          tests:
+            - not_null
+        - name: timestamp_month
+          description: Month of the block creation timestamp specified in block header
+          tests:
+            - not_null
+        - name: nonce
+          description: Difficulty solution specified in block header
+        - name: bits
+          description: Difficulty threshold specified in block header
+        - name: coinbase_param
+          description: Data specified in the coinbase transaction of this block
+        - name: transaction_count
+          description: Number of transactions included in this block
     freshness:
       warn_after: {count: 25, period: hour}
       error_after: {count: 48, period: hour}

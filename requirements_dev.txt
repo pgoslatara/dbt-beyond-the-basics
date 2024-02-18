@@ -1,4 +1,5 @@
 black==23.12.1
+dbt-coverage
 duckdb
 flake8
 GitPython
