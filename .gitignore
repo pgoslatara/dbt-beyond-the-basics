@@ -12,3 +12,6 @@ logs/
 service_account*.json
 target/
 venv*
+coverage.json
+coverage-doc.json
+coverage-test.json
