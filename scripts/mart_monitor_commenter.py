@@ -75,7 +75,7 @@ def compare_manifests_and_comment_impacted_models(
 
     indirectly_impacted_models = sorted(
         run_dbt_command(
-            f"dbt --quiet ls --select state:modified+ --state ./.state --resource-type model --target {env}"
+            f"dbt --quiet ls --select state:modified+ --exclude state:modified --state ./.state --resource-type model --target {env}"
         )
     )
     logging.info(f"{indirectly_impacted_models=}")
