@@ -56,9 +56,16 @@ jobs:
       - name: dbt debug
         run: dbt debug --target $DESTINATION_BRANCH
 
+      # Create objects in BigQuery and run unit tests
+      - name: dbt run --empty
+        run : dbt run --empty --target $DESTINATION_BRANCH
+
+      - name: Run unit tests
+        run: dbt test --select "test_type:unit" --target $DESTINATION_BRANCH
+
       # Needs to be run early in the CI pipeline to allow `dbt docs generate` to succeed (which is a dependency of pre-commit and dbt-coverage)
       - name: dbt build
-        run: dbt --warn-error build --fail-fast --target $DESTINATION_BRANCH
+        run: dbt --warn-error build --fail-fast --full-refresh --exclude "test_type:unit" --target $DESTINATION_BRANCH
 
       - name: dbt docs generate
         run: dbt docs generate --target $DESTINATION_BRANCH
@@ -98,7 +105,7 @@ jobs:
       - run: pytest ./tests/pytest -m sources_json -n 5
 
       - name: dbt build incremental models
-        run: dbt --warn-error build --fail-fast --select config.materialized:incremental --target $DESTINATION_BRANCH
+        run: dbt --warn-error build --fail-fast --select config.materialized:incremental --exclude "test_type:unit" --target $DESTINATION_BRANCH
 
       # Mart Monitor
       - run: if [ "$DESTINATION_BRANCH" == "stg" ]; then DBT_CICD_RUN="false" dbt compile --target $DESTINATION_BRANCH --threads 64; else echo "Only runs for PRs to stg"; fi # Need manifest.json as exists during $DESTINATION_BRANCH runs and not during CI runs

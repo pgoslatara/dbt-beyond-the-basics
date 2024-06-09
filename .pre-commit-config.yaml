@@ -51,12 +51,11 @@ repos:
     hooks:
       - id: sqlfmt
   - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
-    rev: v1.1.1
+    rev: v2.0.1
     hooks:
-    - id: dbt-compile
-      args: ["++threads", "64", "--"]
+    - id: dbt-parse
     - id: dbt-docs-generate
-      args: ["--cmd-flags", "++no-compile", "++threads", "64"]
+      args: ["--cmd-flags", "++threads", "64"]
     - id: check-model-has-properties-file
       name: Check that all models are listed in a YAML file
       files: ^models/intermediate/|^models/marts/|^models/staging/
