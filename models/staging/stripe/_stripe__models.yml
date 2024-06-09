@@ -11,3 +11,23 @@ models:
         tests:
           - accepted_values:
               values: ['credit_card', 'coupon', 'bank_transfer', 'gift_card']
+
+
+unit_tests:
+  - name: payment_method
+    model: stg_stripe__payments
+    given:
+      - input: ref('seed_stripe__payments')
+        rows:
+          - {id: 1, payment_method: 'credit_card'}
+          - {id: 2, payment_method: 'coupon'}
+          - {id: 3, payment_method: 'bank_transfer'}
+          - {id: 4, payment_method: 'gift_card'}
+          - {id: 5, payment_method: 'cash'}
+    expect:
+      rows:
+        - {payment_id: 1, is_voucher: false}
+        - {payment_id: 2, is_voucher: true}
+        - {payment_id: 3, is_voucher: false}
+        - {payment_id: 4, is_voucher: true}
+        - {payment_id: 5, is_voucher: false}
