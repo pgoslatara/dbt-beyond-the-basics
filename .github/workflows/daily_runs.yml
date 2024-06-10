@@ -50,7 +50,7 @@ jobs:
           DBT_DATASET: "stg"
 
       - name: dbt build
-        run: dbt build --target stg
+        run: dbt build --exclude "test_type:unit" --target stg
         env:
           DBT_DATASET: "stg"
 
@@ -86,6 +86,6 @@ jobs:
           DBT_DATASET: "prd"
 
       - name: dbt build
-        run: dbt build --target prd
+        run: dbt build --exclude "test_type:unit" --target prd
         env:
           DBT_DATASET: "prd"
