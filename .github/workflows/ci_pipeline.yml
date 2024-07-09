@@ -49,6 +49,8 @@ jobs:
       - name: dbt compile
         run: dbt compile --target $DESTINATION_BRANCH
 
+      - uses: godatadriven/dbt-bouncer@0.0.1a4
+
       - run: pytest ./tests/pytest -m no_deps -n 5
 
       - run: dbt deps
