@@ -96,7 +96,7 @@ def test_model_marts_correct_locations() -> None:
 
 
 @pytest.mark.manifest_json
-def test_models_marts_must_have_monitorss(manifest_json: dict) -> None:
+def test_models_marts_must_have_monitors(manifest_json: dict) -> None:
     """As marts are exposed to external users we should have at least one monitor on them in `mart_monitor_queries.yml`."""
 
     mart_models = [
