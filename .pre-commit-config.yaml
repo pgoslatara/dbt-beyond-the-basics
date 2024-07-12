@@ -14,9 +14,10 @@ repos:
       - id: detect-private-key
       - id: end-of-file-fixer
         exclude: .+\.csv$
-      - id: no-commit-to-branch
-        name: JIRA ticket ID in branch
-        args: ['--pattern', '^((?![A-Z]+[-][0-9]+[-][\S]+).)*$']
+      # Useful if you want to enforce feature branches beginning with a Jira ticket ID
+      # - id: no-commit-to-branch
+      #   name: JIRA ticket ID in branch
+      #   args: ['--pattern', '^((?![A-Z]+[-][0-9]+[-][\S]+).)*$']
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
     hooks:
