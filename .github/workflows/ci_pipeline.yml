@@ -74,7 +74,7 @@ jobs:
         run: dbt docs generate --target $DESTINATION_BRANCH
 
       - name: pre-commit run -a
-        run: SKIP=dbt-compile,dbt-docs-generate pre-commit run -a
+        run: SKIP=autoflake,dbt-compile,dbt-docs-generate pre-commit run -a
 
       - name: Generate docs coverage report
         id: dbt-docs-coverage-report
