@@ -1,5 +1,8 @@
 # dbt-beyond-the-basics
 
+![CI](https://github.com/pgoslatara/dbt-beyond-the-basics/actions/workflows/ci_pipeline.yml/badge.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A repository demonstrating advanced use cases of dbt in the following areas:
 
 - [Continuous Integration (CI)](#continuous-integration)
