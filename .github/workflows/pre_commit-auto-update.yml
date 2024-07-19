@@ -1,0 +1,25 @@
+name: Pre-commit auto-update
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  auto-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+
+      - uses: browniebroke/pre-commit-autoupdate-action@main
+
+      - uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.PAT_GITHUB }}
+          branch: update/pre-commit-hooks
+          title: Update pre-commit hooks
+          commit-message: "chore: update pre-commit hooks"
+          body: Update versions of pre-commit hooks to latest version.
+          labels: automerge
