@@ -1,4 +1,4 @@
-black==23.12.1
+black==24.4.2
 dbt-coverage
 duckdb
 flake8
