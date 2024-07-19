@@ -3,4 +3,4 @@ dbt-bigquery>=1.8.0,<1.9.0
 pre-commit
 pytest
 pytest-xdist
-shandy-sqlfmt[jinjafmt]==0.21.1
+shandy-sqlfmt[jinjafmt]==0.21.4
