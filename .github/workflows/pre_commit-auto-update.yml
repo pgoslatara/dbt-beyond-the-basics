@@ -6,11 +6,8 @@ on:
   workflow_dispatch:
 
 env:
-  DBT_CICD_RUN: "true"
-  DBT_DATASET: "ci_${{ github.event.number }}_${{ github.run_number }}_${{ github.sha }}"
+  DBT_DATASET: "stg"
   DBT_PROFILES_DIR: "."
-  DESTINATION_BRANCH: "stg"
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   auto-update:
@@ -31,7 +28,7 @@ jobs:
         run: pip install -r requirements.txt -r requirements_dev.txt
 
       - name: dbt docs generate
-        run: dbt docs generate --target $DESTINATION_BRANCH
+        run: dbt docs generate --target stg
 
       - run: pre-commit autoupdate
 
