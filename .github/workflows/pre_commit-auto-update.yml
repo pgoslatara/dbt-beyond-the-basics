@@ -9,6 +9,7 @@ env:
   DBT_CICD_RUN: "true"
   DBT_DATASET: "ci_${{ github.event.number }}_${{ github.run_number }}_${{ github.sha }}"
   DBT_PROFILES_DIR: "."
+  DESTINATION_BRANCH: "stg"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
@@ -21,10 +22,21 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Save stg GCP credentials to runner
+        run: |
+          echo "${{ secrets.DBT_CICD_SA_SECRET_KEY_STG_BASE64_ENCODED }}" | base64 --decode >> ./service_account.json && \
+          export GOOGLE_APPLICATION_CREDENTIALS="$(pwd)/service_account.json"
+
       - name: Install python packages
         run: pip install -r requirements.txt -r requirements_dev.txt
 
-      - uses: browniebroke/pre-commit-autoupdate-action@main
+      - name: dbt docs generate
+        run: dbt docs generate --target $DESTINATION_BRANCH
+
+      - run: pre-commit autoupdate
+
+      - name: pre-commit run -a
+        run: SKIP=dbt-compile,dbt-docs-generate pre-commit run -a
 
       - uses: peter-evans/create-pull-request@v5
         with:

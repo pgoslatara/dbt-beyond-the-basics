@@ -295,7 +295,10 @@ def transform_list_to_markdown(input: list, monitor_name: str) -> str:
     formatted_input = "".join(
         ["".join(x) for x in [v for k, v in input.items() if k != "table_name"]]
     )
-    if "".join(formatted_input).find("🟡") > 0 or "".join(formatted_input).find("🔴") > 0:
+    if (
+        "".join(formatted_input).find("🟡") > 0
+        or "".join(formatted_input).find("🔴") > 0
+    ):
         headers = input["table_name"]
         value_matrix = [v for k, v in input.items() if k != "table_name"]
     else:
