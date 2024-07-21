@@ -5,6 +5,12 @@ on:
     - cron: "0 0 * * *"
   workflow_dispatch:
 
+env:
+  DBT_CICD_RUN: "true"
+  DBT_DATASET: "ci_${{ github.event.number }}_${{ github.run_number }}_${{ github.sha }}"
+  DBT_PROFILES_DIR: "."
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   auto-update:
     runs-on: ubuntu-latest
@@ -12,6 +18,11 @@ jobs:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install python packages
+        run: pip install -r requirements.txt -r requirements_dev.txt
 
       - uses: browniebroke/pre-commit-autoupdate-action@main
 
