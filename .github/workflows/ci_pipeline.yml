@@ -16,7 +16,8 @@ env:
 jobs:
   ci_pipeline:
     permissions:
-      packages: read
+      id-token: read
+      # packages: read
       pull-requests: write
     runs-on: ubuntu-latest
 
