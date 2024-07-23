@@ -28,19 +28,8 @@ jobs:
       #   # This is where you will update the PAT to GITHUB_TOKEN
       #   run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - uses: godatadriven/dbt-bouncer@fix-action-for-public-use
+      - uses: godatadriven/dbt-bouncer@v0
         with:
           config-file: dbt-bouncer.yml
-          github-actor: ${{ github.actor }}
-          github-token: ${{ secrets.PAT_GITHUB }}
-
-      - uses: godatadriven/dbt-bouncer@fix-action-for-public-use
-        with:
-          config-file: dbt-bouncer.yml
-          github-actor: ${{ github.actor }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: godatadriven/dbt-bouncer@fix-action-for-public-use
-        with:
           github-actor: ${{ github.actor }}
           github-token: ${{ secrets.PAT_GITHUB }}
