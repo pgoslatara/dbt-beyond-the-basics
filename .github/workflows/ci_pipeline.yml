@@ -32,9 +32,15 @@ jobs:
         with:
           config-file: dbt-bouncer.yml
           github-actor: ${{ github.actor }}
+          github-token: ${{ secrets.PAT_GITHUB }}
+
+      - uses: godatadriven/dbt-bouncer@fix-action-for-public-use
+        with:
+          config-file: dbt-bouncer.yml
+          github-actor: ${{ github.actor }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: godatadriven/dbt-bouncer@fix-action-for-public-use
         with:
           github-actor: ${{ github.actor }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.PAT_GITHUB }}
