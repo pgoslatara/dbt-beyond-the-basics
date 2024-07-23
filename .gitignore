@@ -10,7 +10,7 @@ __pycache__/
 dbt_packages/
 logs/
 service_account*.json
-target/
+# target/
 venv*
 coverage.json
 coverage-doc.json

@@ -23,26 +23,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Save stg GCP credentials to runner
-        run: |
-          echo "${{ secrets.DBT_CICD_SA_SECRET_KEY_STG_BASE64_ENCODED }}" | base64 --decode >> ./service_account.json && \
-          export GOOGLE_APPLICATION_CREDENTIALS="$(pwd)/service_account.json"
-
-      - name: Authenticate with GCP
-        run: |
-          gcloud auth activate-service-account dbt-cicd@beyond-basics-$DESTINATION_BRANCH.iam.gserviceaccount.com --key-file=./service_account.json && \
-          gcloud config set project beyond-basics-$DESTINATION_BRANCH
-
-      - name: Install python packages
-        run: pip install -r requirements.txt -r requirements_dev.txt
-
-      - name: dbt compile
-        run: dbt compile --target $DESTINATION_BRANCH
-
       - name: Log in to registry
         # This is where you will update the PAT to GITHUB_TOKEN
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
