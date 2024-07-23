@@ -1,7 +1,7 @@
 name: ci_pipeline
 
 on:
-  pull_request:
+  pull_request_target:
     branches:
       - stg
       - prd
@@ -20,9 +20,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
@@ -41,5 +41,9 @@ jobs:
 
       - name: dbt compile
         run: dbt compile --target $DESTINATION_BRANCH
+
+      - uses: godatadriven/dbt-bouncer@v0
+        with:
+          config-file: dbt-bouncer.yml
 
       - uses: godatadriven/dbt-bouncer@v0

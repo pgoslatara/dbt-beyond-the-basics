@@ -1,0 +1,50 @@
+name: Pre-commit auto-update
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+env:
+  DBT_DATASET: "stg"
+  DBT_PROFILES_DIR: "."
+
+jobs:
+  auto-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Save stg GCP credentials to runner
+        run: |
+          echo "${{ secrets.DBT_CICD_SA_SECRET_KEY_STG_BASE64_ENCODED }}" | base64 --decode >> ./service_account.json && \
+          export GOOGLE_APPLICATION_CREDENTIALS="$(pwd)/service_account.json"
+
+      - name: Install python packages
+        run: pip install -r requirements.txt -r requirements_dev.txt
+
+      - name: dbt docs generate
+        run: dbt docs generate --target stg
+
+      - run: pre-commit autoupdate
+
+      - name: pre-commit run -a
+        run: SKIP=dbt-compile,dbt-docs-generate pre-commit run -a
+
+      - uses: EndBug/add-and-commit@v9
+        with:
+            author_name: Github Actions
+            author_email: actions@github.com
+            new_branch: update/pre-commit-hooks-${{ github.run_id }}
+
+      # To ensure the PR triggers CI workflows it needs to use someone's PAT instead of the default GITHUB_TOKEN
+      - name: Create Pull Request
+        run: |
+            export GITHUB_TOKEN= && \
+            echo ${{ secrets.PAT_GITHUB }} > token.txt && \
+            gh auth login --with-token < token.txt && \
+            gh pr create -B stg -H update/pre-commit-hooks-${{ github.run_id }} --title 'Pre-commit hook update ${{ github.run_id }}' --body 'Created by Github action'
