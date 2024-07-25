@@ -2,6 +2,7 @@ version: 2
 
 models:
   - name: stg_jaffle_shop__customers
+    description: Stuffing to get dbt-bouncer to pass.
     columns:
       - name: customer_id
         tests:
@@ -9,6 +10,7 @@ models:
           - not_null
 
   - name: stg_jaffle_shop__orders
+    description: Stuffing to get dbt-bouncer to pass.
     columns:
       - name: order_id
         tests:

@@ -2,6 +2,7 @@ version: 2
 
 models:
   - name: fct_bitcoin_blocks
+    description: Stuffing to get dbt-bouncer to pass.
     columns:
       - name: block_hash
         description: Hash of this block

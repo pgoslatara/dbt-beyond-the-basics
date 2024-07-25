@@ -7,7 +7,7 @@ checks:
   - name: check_model_names
     include: ^staging
     model_name_pattern: ^stg_
-  - name: check_populated_model_description
+  - name: check_model_description_populated
   - name: check_project_name
-    project_name_pattern: ^dbt_bouncer_
+    project_name_pattern: ^beyond
   - name: check_top_level_directories
