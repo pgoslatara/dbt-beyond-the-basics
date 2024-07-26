@@ -1,0 +1,1 @@
+select * from `beyond-basics-dev`.`dbt_padraic_intermediate_finance`.`int_customers`

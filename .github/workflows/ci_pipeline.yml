@@ -36,4 +36,7 @@ jobs:
 
       - uses: godatadriven/dbt-bouncer@v0
         if: always()
-          
+
+      - uses: actions/setup-python@v5
+      
+      - run: python dbt-bouncer.pex
