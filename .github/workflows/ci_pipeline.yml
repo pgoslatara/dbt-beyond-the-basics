@@ -39,4 +39,4 @@ jobs:
 
       - uses: actions/setup-python@v5
       
-      - run: python dbt-bouncer.pex --config-file $PWD/dbt-bouncer.yml
+      - run: LOG_LEVEL-DEBUG python dbt-bouncer.pex --config-file $PWD/dbt-bouncer.yml
