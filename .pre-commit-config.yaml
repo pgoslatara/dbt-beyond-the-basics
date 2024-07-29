@@ -35,7 +35,7 @@ repos:
       - id: autoflake
         args: ["--in-place", "--remove-all-unused-imports"]
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.16.0
+    rev: v3.17.0
     hooks:
       - id: pyupgrade
         name: Check for code that can use new Python features
@@ -48,7 +48,7 @@ repos:
         pass_filenames: false
         always_run: true
   - repo: https://github.com/tconbeer/sqlfmt
-    rev: v0.22.0
+    rev: v0.23.2
     hooks:
       - id: sqlfmt
   - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
