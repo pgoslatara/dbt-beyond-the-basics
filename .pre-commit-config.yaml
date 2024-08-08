@@ -48,11 +48,11 @@ repos:
         pass_filenames: false
         always_run: true
   - repo: https://github.com/tconbeer/sqlfmt
-    rev: v0.21.4
+    rev: v0.22.0
     hooks:
       - id: sqlfmt
   - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
-    rev: v2.0.2
+    rev: v2.0.3
     hooks:
     - id: dbt-parse
     - id: dbt-docs-generate
