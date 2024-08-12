@@ -36,6 +36,7 @@ jobs:
         run: SKIP=dbt-compile,dbt-docs-generate pre-commit run -a
 
       - uses: EndBug/add-and-commit@v9
+        id: add-and-commit
         with:
             author_name: Github Actions
             author_email: actions@github.com
@@ -43,6 +44,7 @@ jobs:
 
       # To ensure the PR triggers CI workflows it needs to use someone's PAT instead of the default GITHUB_TOKEN
       - name: Create Pull Request
+        if: steps.add-and-commit.outputs.committed == 'true'
         run: |
             export GITHUB_TOKEN= && \
             echo ${{ secrets.PAT_GITHUB }} > token.txt && \
