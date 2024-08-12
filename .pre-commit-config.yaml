@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0
     hooks:
       - id: trailing-whitespace
       - id: check-added-large-files
@@ -14,9 +14,10 @@ repos:
       - id: detect-private-key
       - id: end-of-file-fixer
         exclude: .+\.csv$
-      - id: no-commit-to-branch
-        name: JIRA ticket ID in branch
-        args: ['--pattern', '^((?![A-Z]+[-][0-9]+[-][\S]+).)*$']
+      # Useful if you want to enforce feature branches beginning with a Jira ticket ID
+      # - id: no-commit-to-branch
+      #   name: JIRA ticket ID in branch
+      #   args: ['--pattern', '^((?![A-Z]+[-][0-9]+[-][\S]+).)*$']
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
     hooks:
@@ -24,17 +25,17 @@ repos:
         args: ["--profile", "black", "--filter-files"]
         name: isort (python)
   - repo: https://github.com/ambv/black
-    rev: 23.12.1
+    rev: 24.8.0
     hooks:
       - id: black
         name: Run black formatter
   - repo: https://github.com/PyCQA/autoflake
-    rev: v2.2.1
+    rev: v2.3.1
     hooks:
       - id: autoflake
         args: ["--in-place", "--remove-all-unused-imports"]
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.15.0
+    rev: v3.17.0
     hooks:
       - id: pyupgrade
         name: Check for code that can use new Python features
@@ -47,11 +48,11 @@ repos:
         pass_filenames: false
         always_run: true
   - repo: https://github.com/tconbeer/sqlfmt
-    rev: v0.21.1
+    rev: v0.23.2
     hooks:
       - id: sqlfmt
   - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
-    rev: v2.0.1
+    rev: v2.0.3
     hooks:
     - id: dbt-parse
     - id: dbt-docs-generate
