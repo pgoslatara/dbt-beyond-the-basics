@@ -34,3 +34,14 @@ jobs:
 
       - uses: godatadriven/dbt-bouncer@v0
         if: always()
+      
+      - run: ls -ahl
+
+      - uses: godatadriven/dbt-bouncer@v0
+        if: always()
+        with:
+          output-file: results.json
+      
+      - run: ls -ahl
+      - run: cat results.json
+  
