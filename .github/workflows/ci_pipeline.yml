@@ -43,5 +43,8 @@ jobs:
           output-file: results.json
       
       - run: ls -ahl
+        if: always()
+        
       - run: cat results.json
+        if: always()
   
