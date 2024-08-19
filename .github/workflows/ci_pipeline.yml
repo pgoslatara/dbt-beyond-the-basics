@@ -38,7 +38,7 @@ jobs:
       - run: ls -ahl
         if: always()
 
-      - uses: godatadriven/dbt-bouncer@move-pr-comment-to-gh
+      - uses: godatadriven/dbt-bouncer@v0
         if: always()
         with:
           output-file: results.json
