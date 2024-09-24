@@ -2,6 +2,7 @@ version: 2
 
 models:
   - name: stg_stripe__payments
+    description: Table of sample payment data
     columns:
       - name: payment_id
         tests:

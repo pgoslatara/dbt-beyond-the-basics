@@ -2,6 +2,7 @@ version: 2
 
 models:
   - name: stg_public_datasets__bitcoin_blocks
+    description: Public data on bitcoin blocks
     columns:
       - name: block_hash
         tests:

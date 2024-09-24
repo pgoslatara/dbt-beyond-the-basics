@@ -1,7 +1,7 @@
 name: ci_pipeline
 
 on:
-  pull_request_target:
+  pull_request:
     branches:
       - stg
       - prd
@@ -72,6 +72,9 @@ jobs:
 
       - name: dbt docs generate
         run: dbt docs generate --target $DESTINATION_BRANCH
+
+      - name: Run `dbt-bouncer`
+        run: dbt-bouncer
 
       - name: pre-commit run -a
         run: SKIP=autoflake,dbt-compile,dbt-docs-generate pre-commit run -a
