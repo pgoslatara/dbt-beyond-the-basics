@@ -1,4 +1,5 @@
 black==24.8.0
+dbt-bouncer
 dbt-coverage
 duckdb
 flake8

@@ -9,6 +9,8 @@ A repository demonstrating advanced use cases of dbt in the following areas:
 
     - [Pre-commit](#pre-commit)
     - [dbt Artifacts and Pytest](#dbt-artifacts-and-pytest)
+    - [Coverage reports](#coverage-reports)
+    - [dbt-bouncer](#dbt-bouncer)
     - [dbt commands](#dbt-commands)
     - [Using `state:modified`](#using-statemodified)
     - [Mart Monitor](#mart-monitor)
@@ -148,6 +150,25 @@ They can also be run as a pre-commit hook:
 ## Coverage reports
 
 Some of the functionality discussed above in [dbt Artifacts and Pytest](#dbt-artifacts-and-pytest) can be automated using [dbt-coverage](https://github.com/slidoapp/dbt-coverage). This is a python package that prduces coverage reports for both documentation and, separately, for tests. All pull requests in this repo will have a comment that provides these stats. This allows PR reviewers to quickly assess if any newly added models are lacking acceptable documentation or test coverage.
+
+## dbt-bouncer
+
+As an alternative to running `pytest` in our CI pipeline we can instead use [`dbt-bouncer`](https://github.com/godatadriven/dbt-bouncer). This is a python package that runs a series of checks on a dbt project.
+
+Running `dbt-bouncer` involves three steps:
+
+1. Install the package:
+    ```bash
+    pip install dbt-bouncer
+    ```
+
+2. Create a `dbt-bouncer.yml` configuration file, see [dbt-bouncer.yml](./dbt-bouncer.yml) for an example. This file lists all the checks we want to apply to this dbt project.
+
+3. Run the `dbt-bouncer` command (locally or in a CI pipeline):
+
+    ```bash
+    dbt-bouncer
+    ```
 
 ## dbt commands
 

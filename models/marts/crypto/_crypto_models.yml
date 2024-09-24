@@ -2,6 +2,7 @@ version: 2
 
 models:
   - name: fct_bitcoin_blocks
+    description: Bitcoin blocks partitioned per day of creation
     columns:
       - name: block_hash
         description: Hash of this block
