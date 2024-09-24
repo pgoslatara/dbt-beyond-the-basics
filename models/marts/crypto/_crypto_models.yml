@@ -10,25 +10,49 @@ models:
           - not_null
       - name: created_at
         description: Block creation timestamp specified in block header
+        tests:
+          - not_null
       - name: timestamp_date
         description: Block creation date specified in block header
+        tests:
+          - not_null
       - name: size
         description: The size of block data in bytes
+        tests:
+          - not_null
       - name: stripped_size
         description: The size of block data in bytes excluding witness data
+        tests:
+          - not_null
       - name: weight
         description: Three times the base size plus the total size. https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki
+        tests:
+          - not_null
       - name: number
         description: The number of the block
+        tests:
+          - not_null
       - name: version
         description: Protocol version specified in block header
+        tests:
+          - not_null
       - name: merkle_root
         description: The root node of a Merkle tree, where leaves are transaction hashes
+        tests:
+          - not_null
       - name: nonce
         description: Difficulty solution specified in block header
+        tests:
+          - not_null
       - name: bits
         description: Difficulty threshold specified in block header
+        tests:
+          - not_null
       - name: coinbase_param
         description: Data specified in the coinbase transaction of this block
+        tests:
+          - not_null
       - name: transaction_count
         description: Number of transactions included in this block
+        tests:
+          - not_null

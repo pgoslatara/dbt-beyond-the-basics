@@ -9,3 +9,25 @@ models:
         tests:
           - unique
           - not_null
+
+      - name: first_name
+        description: Customer's first name. PII.
+        tests:
+          - not_null
+
+      - name: last_name
+        description: Customer's last name. PII.
+        tests:
+          - not_null
+
+      - name: first_order
+        description: Date (UTC) of a customer's first order
+
+      - name: most_recent_order
+        description: Date (UTC) of a customer's most recent order
+
+      - name: number_of_orders
+        description: Count of the number of orders a customer has placed
+
+      - name: customer_lifetime_value
+        description: Total value (AUD) of a customer's orders
