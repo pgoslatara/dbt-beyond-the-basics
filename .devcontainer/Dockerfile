@@ -7,6 +7,16 @@ RUN apt update && \
 RUN curl https://sdk.cloud.google.com > install.sh && bash install.sh --disable-prompts
 ENV PATH $PATH:/root/google-cloud-sdk/bin
 
+# Install zsh
+RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.2.0/zsh-in-docker.sh)" \
+    -p git \
+    -p ssh-agent \
+    -p https://github.com/zsh-users/zsh-autosuggestions \
+    -p https://github.com/zsh-users/zsh-completions \
+    -p https://github.com/zsh-users/zsh-syntax-highlighting.git \
+    -p git-auto-fetch && \
+    chsh -s $(which zsh)
+
 ## Pip dependencies
 RUN pip install --upgrade pip
 

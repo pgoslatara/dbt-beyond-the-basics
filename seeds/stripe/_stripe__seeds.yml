@@ -12,3 +12,9 @@ seeds:
             tests:
                 - unique
                 - not_null
+          - name: order_id
+            description: Foreign key to the orders table
+          - name: payment_method
+            description: The payment method used
+          - name: amount
+            description: The amount of the payment in cents
