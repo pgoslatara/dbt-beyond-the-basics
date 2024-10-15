@@ -7,7 +7,7 @@ on:
 
 jobs:
   cleanup_stg:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -17,6 +17,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
 
       - name: Save stg GCP credentials to runner
         run: |
@@ -34,7 +37,7 @@ jobs:
       - run: python ./scripts/drop_unused_bq_resources.py --dataset_pattern "cicd_" --environment stg
 
   cleanup_prd:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -44,6 +47,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
 
       - name: Save prd GCP credentials to runner
         run: |
