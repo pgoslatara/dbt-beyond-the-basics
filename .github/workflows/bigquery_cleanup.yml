@@ -3,10 +3,11 @@ name: bigquery_cleanup
 on:
   schedule:
     - cron: "0 1 * * *"
+  workflow_dispatch:
 
 jobs:
   cleanup_stg:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v4
@@ -33,7 +34,7 @@ jobs:
       - run: python ./scripts/drop_unused_bq_resources.py --dataset_pattern "cicd_" --environment stg
 
   cleanup_prd:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v4
