@@ -26,6 +26,9 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
       - name: Save stg GCP credentials to runner
         run: |
           echo "${{ secrets.DBT_CICD_SA_SECRET_KEY_STG_BASE64_ENCODED }}" | base64 --decode >> ./service_account.json && \
