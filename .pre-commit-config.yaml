@@ -48,7 +48,7 @@ repos:
         pass_filenames: false
         always_run: true
   - repo: https://github.com/tconbeer/sqlfmt
-    rev: v0.23.3
+    rev: v0.24.0
     hooks:
       - id: sqlfmt
   - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
