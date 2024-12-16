@@ -75,6 +75,38 @@ Continuous Integration (CI) is the process of codifying standards, these range f
             files: models/staging/
     ```
 
+### The advantage of local hooks
+
+Most pre-commit hooks are "isolated" hooks in the sense that pre-commit creates a dedicated, isolated environment for each hook to run in. In effect this means that the python environment the hook runs in is not the same as the python environment you are working in locally.
+
+For example, you `pip install` the `sqlfmt` package and your local environment now has version `0.23.0` installed. You may run `sqlfmt models` to format your dbt models after making some changes. When you are ready to commit your changes pre-commit also runs `sqlfmt`, however it will use a different python environment to do so, potentially resulting in conflicting changes.
+
+One way to avoid this is to use `local` hooks. These are hooks that run in the same python environment that you are developing in. For example, this "isolated" hook:
+
+```yaml
+# .pre-commit-config.yaml
+- repo: https://github.com/tconbeer/sqlfmt
+    rev: v0.24.0
+    hooks:
+    - id: sqlfmt
+```
+
+Can be changed to:
+
+```yaml
+# .pre-commit-config.yaml
+- repo: local
+hooks:
+    - id: sqlfmt
+    entry: python -m sqlfmt
+    language: system
+    name: Run sqlfmt
+    pass_filenames: true
+    types_or: [jinja, sql]
+```
+
+The primary advantage of this change is that your local environment and pre-commit are now configured to use the same python environment and the same `sqlfmt` version. A tangential benefit is that updates to packages used in pre-commit now only require updating of the python package. Previously this would have required updating both the python package and the pre-commit hook, a process which if not done correctly could result in a mis-matched setup.
+
 ## dbt Artifacts and Pytest
 
 dbt produces 4 artifacts in the form of JSON files:

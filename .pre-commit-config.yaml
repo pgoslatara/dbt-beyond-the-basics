@@ -18,27 +18,37 @@ repos:
       # - id: no-commit-to-branch
       #   name: JIRA ticket ID in branch
       #   args: ['--pattern', '^((?![A-Z]+[-][0-9]+[-][\S]+).)*$']
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
+  - repo: local
     hooks:
       - id: isort
-        args: ["--profile", "black", "--filter-files"]
-        name: isort (python)
-  - repo: https://github.com/ambv/black
-    rev: 24.10.0
+        entry: python -m isort --profile black --filter-files
+        language: system
+        name: isort
+        pass_filenames: true
+  - repo: local
     hooks:
       - id: black
+        entry: python -m black
+        language: system
         name: Run black formatter
-  - repo: https://github.com/PyCQA/autoflake
-    rev: v2.3.1
+        pass_filenames: true
+        types_or: [python, pyi]
+  - repo: local
     hooks:
       - id: autoflake
-        args: ["--in-place", "--remove-all-unused-imports"]
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.19.0
+        entry: python -m autoflake --in-place --remove-all-unused-imports
+        language: system
+        name: Run autoflake
+        pass_filenames: true
+        types_or: [python, pyi]
+  - repo: local
     hooks:
       - id: pyupgrade
+        entry: python -m pyupgrade
+        language: system
         name: Check for code that can use new Python features
+        pass_filenames: true
+        types_or: [python, pyi]
   - repo: local
     hooks:
       - id: pytest-no-deps
@@ -47,10 +57,14 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
-  - repo: https://github.com/tconbeer/sqlfmt
-    rev: v0.24.0
+  - repo: local
     hooks:
       - id: sqlfmt
+        entry: python -m sqlfmt
+        language: system
+        name: Run sqlfmt
+        pass_filenames: true
+        types_or: [jinja, sql]
   - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
     rev: v2.0.6
     hooks:

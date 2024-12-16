@@ -1,16 +1,11 @@
-{{
-    config(
-        persist_docs={"relation": true, "columns": false}
-    )
+{{ config(persist_docs={"relation": true, "columns": false}) }}
 
-}}
-
-{% set payment_methods = ['credit_card', 'coupon', 'bank_transfer', 'gift_card'] %}
+{% set payment_methods = ["credit_card", "coupon", "bank_transfer", "gift_card"] %}
 
 with
-    orders as (select * from {{ ref('stg_jaffle_shop__orders') }}),
+    orders as (select * from {{ ref("stg_jaffle_shop__orders") }}),
 
-    payments as (select * from {{ ref('stg_stripe__payments') }}),
+    payments as (select * from {{ ref("stg_stripe__payments") }}),
 
     order_payments as (
 

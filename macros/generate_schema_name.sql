@@ -5,9 +5,11 @@
         For example, `marts.dim_customer` should exist in stg and prd, i.e. there should be no references to the project in the dataset name.
         This will allow other tooling (BI, CICD scripts, etc.) to work across all environments without the need for differing logic per environment.
     #}
-    {% if env_var('DBT_CICD_RUN', 'false') == 'true' %} {{ env_var('DBT_DATASET') }}
+    {% if env_var("DBT_CICD_RUN", "false") == "true" %} {{ env_var("DBT_DATASET") }}
 
-    {% elif target.name in ['stg', 'prd'] and env_var('DBT_CICD_RUN', 'false') == 'false' %}
+    {% elif target.name in ["stg", "prd"] and env_var(
+        "DBT_CICD_RUN", "false"
+    ) == "false" %}
 
         {{ node.config.schema }}
 

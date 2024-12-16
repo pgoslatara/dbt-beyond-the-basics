@@ -1,6 +1,2 @@
 dbt-core>=1.9.0,<1.10.0
 dbt-bigquery>=1.9.0,<1.10.0
-pre-commit
-pytest
-pytest-xdist
-shandy-sqlfmt[jinjafmt]==0.24.0
