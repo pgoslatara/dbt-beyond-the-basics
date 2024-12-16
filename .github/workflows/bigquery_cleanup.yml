@@ -15,8 +15,6 @@ jobs:
           ref: stg
 
       - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
 
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
@@ -45,8 +43,6 @@ jobs:
           ref: prd
 
       - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
 
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'

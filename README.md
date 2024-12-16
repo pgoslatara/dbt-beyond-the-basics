@@ -19,6 +19,8 @@ A repository demonstrating advanced use cases of dbt in the following areas:
 
 - [Dev Containers](#dev-containers)
 
+- [Python](#python)
+
 - [Others](#others)
 
 See something incorrect, open an [issue](https://github.com/pgoslatara/dbt-beyond-the-basics/issues/new)!
@@ -299,6 +301,24 @@ TODO
 [![Open in Dev Containers](https://img.shields.io/static/v1?label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/pgoslatara/dbt-beyond-the-basics)
 
 TODO
+
+# Python
+
+dbt runs in a python environment, therefore the configuration of your python environment is a critical part of a dbt project.
+
+## The `.python-version` file
+
+There are many different versions of python, and there are many different parts of a dbt project that require access to python. One widely supported way of managing the python version is to create a `.python-version` file in the root of your project. This file contains the python version you want to use, and is as simple as:
+
+```shell
+3.11.10
+```
+
+Python has a large ecosystem of tools, many of these will use the `.python-version` file if it is present:
+
+* `actions/setup-python`: A GitHub Action that installs python in the ephemeral environment used by a GitHub workflow.
+* `pyenv`: A tool for installing multiple versions of python.
+* `uv`: A package manager for python.
 
 # Others
 
