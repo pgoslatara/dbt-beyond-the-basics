@@ -298,9 +298,17 @@ TODO
 
 # Dev Containers
 
-[![Open in Dev Containers](https://img.shields.io/static/v1?label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/pgoslatara/dbt-beyond-the-basics)
+[Dev containers](https://containers.dev/) provide a Docker-ised development environment and are natively supported by both PyCharm and VSCode, allowing developers to continue using their preferred IDE. Using a dev container allows all developers to work in a standardised environment (including VSCode extensions!), minimising setup issues, reducing the need for manual configuration and allowing for a consistent development experience. Dev containers are useful in workplaces where developers use different OS's (think Mac and Windows), where developers may not be familiar with setting up python environments and where connecting to the underlying database requires non-standard configuration (SQL Server sometimes requires specific drivers to be installed). You can even use the [devcontainers/ci](https://github.com/devcontainers/ci) Github Action to use your standardised dev container in your GitHub workflows.
 
-TODO
+To use a dev container you must have [Docker](https://docs.docker.com/engine/install/) (or another container manager like [Podman](https://code.visualstudio.com/remote/advancedcontainers/docker-options#_podman)) installed, while some workplaces may restrict this due to security concerns, container managers are very widely used engineering tools and when used correctly can be used for more than just dev containers.
+
+To view the dev container configuration for this project, view the [.devcontainer](https://github.com/pgoslatara/dbt-beyond-the-basics/tree/stg/.devcontainer) directory.
+
+To open this repository in a dev container:
+
+1. Click this button: [![Open in dev container](https://img.shields.io/static/v1?label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/pgoslatara/dbt-beyond-the-basics)
+
+1. Clone this repo to your local machine, open the repository in VSCode and from the command palette select `Dev Containers: Reopen in Container`.
 
 # Python
 
