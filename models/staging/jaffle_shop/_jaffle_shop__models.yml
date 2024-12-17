@@ -5,18 +5,42 @@ models:
     description: Table of sample customer data from Jaffle shop project
     columns:
       - name: customer_id
+        description: Unique identifier for each customer
         tests:
           - unique
           - not_null
+      - name: first_name
+        description: First name of the customer
+        tests:
+        - not_null
+      - name: last_name
+        description: Last name of the customer
+        tests:
+        - not_null
+      - name: full_name
+        description: Full name of the customer
+        tests:
+        - not_null
 
   - name: stg_jaffle_shop__orders
     description: Table of sample order data from Jaffle shop project
     columns:
       - name: order_id
+        description: Unique identifier for each order
         tests:
           - unique
           - not_null
+      - name: customer_id
+        description: Unique identifier for each customer
+        tests:
+          - not_null
+      - name: order_date
+        description: Date of the order
+        tests:
+        - not_null
       - name: status
+        description: Status of the order
         tests:
           - accepted_values:
               values: ['placed', 'shipped', 'completed', 'return_pending', 'returned']
+          - not_null

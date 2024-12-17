@@ -9,12 +9,19 @@ seeds:
         - "SELECT 1 AS id"
       columns:
           - name: id
+            description: The primary key for the table
             tests:
                 - unique
                 - not_null
           - name: order_id
             description: Foreign key to the orders table
+            tests:
+              - not_null
           - name: payment_method
             description: The payment method used
+            tests:
+              - not_null
           - name: amount
             description: The amount of the payment in cents
+            tests:
+              - not_null
