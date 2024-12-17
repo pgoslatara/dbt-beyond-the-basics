@@ -5,14 +5,28 @@ models:
     description: Table of sample payment data
     columns:
       - name: payment_id
+        description: The unique identifier for the payment
         tests:
           - unique
           - not_null
+      - name: order_id
+        description: The order ID associated with the payment
+        tests:
+          - not_null
       - name: payment_method
+        description: The payment method used for the payment
         tests:
           - accepted_values:
               values: ['credit_card', 'coupon', 'bank_transfer', 'gift_card']
-
+          - not_null
+      - name: is_voucher
+        description: Whether the payment is a voucher
+        tests:
+          - not_null
+      - name: amount
+        description: The amount of the payment in dollars
+        tests:
+          - not_null
 
 unit_tests:
   - name: payment_method
