@@ -1,11 +1,15 @@
-FROM python:3.11.10
+FROM python:3.11.10-slim-bullseye
 
+ENV PATH=$PATH:/root/google-cloud-sdk/bin
+
+# Install necessary packages
 RUN apt update && \
-    apt install -y git sudo
-
-# Install gcloud CLI
-RUN curl https://sdk.cloud.google.com > install.sh && bash install.sh --disable-prompts
-ENV PATH $PATH:/root/google-cloud-sdk/bin
+    apt install -y --no-install-recommends gcc git g++ libffi-dev wget sudo && \
+    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
+    apt-get install apt-transport-https ca-certificates gnupg curl -y && \
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - && \
+    apt-get update && apt-get install google-cloud-sdk -y && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install zsh
 RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.2.0/zsh-in-docker.sh)" \
@@ -17,18 +21,15 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
     -p git-auto-fetch && \
     chsh -s $(which zsh)
 
-## Pip dependencies
-RUN pip install --upgrade pip
-
-# Install dependencies
-COPY requirements.txt requirements.txt
-COPY requirements_dev.txt requirements_dev.txt
-RUN pip install -r requirements.txt -r requirements_dev.txt
+## Install dependencies
+COPY requirements.txt requirements_dev.txt ./
+RUN pip install --upgrade pip --no-cache && \
+    pip install --no-cache-dir -r requirements.txt -r requirements_dev.txt
 
 # Set up pre-commit
-COPY .git .git
 COPY .pre-commit-config.yaml .pre-commit-config.yaml
-RUN git config --global --add safe.directory /workspaces/dbt-beyond-the-basics
-RUN pre-commit install-hooks
+COPY .git .git
+RUN git config --global --add safe.directory /workspaces/dbt-beyond-the-basics && \
+    pre-commit install-hooks
 
 COPY . .
