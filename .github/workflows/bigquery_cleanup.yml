@@ -18,13 +18,22 @@ jobs:
           ref: stg
 
       - uses: actions/setup-python@v5
+        id: setup-python
+
+      - name: Load cached Poetry installation
+        id: cached-poetry
+        uses: actions/cache@v4
+        with:
+              path: /home/runner/.local
+              key: poetry-cache-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ env.POETRY_VERSION }}
 
       - name: Install Poetry
+        if: steps.cached-poetry.outputs.cache-hit != 'true'
         uses: snok/install-poetry@v1
         with:
               installer-parallel: true
               version: ${{ env.POETRY_VERSION }}
-              virtualenvs-create: false
+              virtualenvs-create: true
               virtualenvs-in-project: true
 
       - name: 'Set up Cloud SDK'
@@ -40,10 +49,18 @@ jobs:
           gcloud auth activate-service-account dbt-cicd@beyond-basics-stg.iam.gserviceaccount.com --key-file=./service_account.json && \
           gcloud config set project beyond-basics-stg
 
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v4
+        with:
+              path: .venv
+              key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
       - name: Install python packages
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-ansi
 
-      - run: python ./scripts/drop_unused_bq_resources.py --dataset_pattern "cicd_" --environment stg
+      - run: poetry run python ./scripts/drop_unused_bq_resources.py --dataset_pattern "cicd_" --environment stg
 
   cleanup_prd:
     runs-on: ubuntu-latest
@@ -54,13 +71,22 @@ jobs:
           ref: prd
 
       - uses: actions/setup-python@v5
+        id: setup-python
+
+      - name: Load cached Poetry installation
+        id: cached-poetry
+        uses: actions/cache@v4
+        with:
+              path: /home/runner/.local
+              key: poetry-cache-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ env.POETRY_VERSION }}
 
       - name: Install Poetry
+        if: steps.cached-poetry.outputs.cache-hit != 'true'
         uses: snok/install-poetry@v1
         with:
               installer-parallel: true
               version: ${{ env.POETRY_VERSION }}
-              virtualenvs-create: false
+              virtualenvs-create: true
               virtualenvs-in-project: true
 
       - name: 'Set up Cloud SDK'
@@ -76,7 +102,15 @@ jobs:
           gcloud auth activate-service-account dbt-cicd@beyond-basics-prd.iam.gserviceaccount.com --key-file=./service_account.json && \
           gcloud config set project beyond-basics-prd
 
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v4
+        with:
+              path: .venv
+              key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
       - name: Install python packages
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-ansi
 
-      - run: python ./scripts/drop_unused_bq_resources.py --dataset_pattern "cicd_" --environment prd
+      - run: poetry run python ./scripts/drop_unused_bq_resources.py --dataset_pattern "cicd_" --environment prd
