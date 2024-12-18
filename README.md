@@ -334,6 +334,70 @@ This repository uses [Poetry](https://python-poetry.org/) as a python package ma
 
 Note that there are several other python package managers available such as `hatch`, `pdm` and `uv`.
 
+## Caching in GitHub Workflows
+
+GitHub workflows initialise in an almost empty environment, just your repository contents and some standard CLI tools (think `gh`, GitHub's own CLI tool). One common step is to recreate the python virtual environment in the workflow environment. This involves downloading and installing all the python dependencies into the `.venv` directory. But what if you are re-running a CI workflow, or what if your dependencies are the same as your previous run? In these cases you are repeating work that has already been done.
+
+One way to avoid this is to use caching, the concept of storing the output of your work and reusing it in a later run. GitHub Actions has a built in caching mechanism, you can specify a cache key and a path to cache. You can even view the existing caches for this repo [here](https://github.com/pgoslatara/dbt-beyond-the-basics/actions/caches).
+
+dbt repositories can benefit from caching in two areas:
+
+1. The python virtual environment stored in `.venv`.
+1. The Poetry executable stored in `/home/runner/.local`.
+
+Both of these are the result of work we perform in almost every GitHub workflow run. And both of these can be easily invalidated when necessary; the virtual environment when the contents of `poetry.lock` change and the Poetry executable when the version of Poetry changes.
+
+To enable caching, let's take an example workflow snippet:
+
+```yaml
+
+env:
+  POETRY_VERSION: "1.8.3"
+
+jobs:
+  auto-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        id: setup-python
+
+      - name: Load cached Poetry installation
+        id: cached-poetry
+        uses: actions/cache@v4
+        with:
+              path: /home/runner/.local
+              key: poetry-cache-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ env.POETRY_VERSION }}
+
+      - name: Install Poetry
+        if: steps.cached-poetry.outputs.cache-hit != 'true'
+        uses: snok/install-poetry@v1
+        with:
+              installer-parallel: true
+              version: ${{ env.POETRY_VERSION }}
+              virtualenvs-create: false
+              virtualenvs-in-project: true
+
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v4
+        with:
+              path: .venv
+              key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install python packages
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Whatever else we want to do
+        run: ...
+```
+
+Every cache requires a unique identifier, this `key` should contain a reference to the parameters the cache is dependent upon. For the Poetry cache, this is the Poetry version and the python version and the operating system. For the virtual environment cache, this is the operating system, the python version and the hash of the `poetry.lock` file. By combining these parameters we create a key that allows us to check if a suitable cache already exists, and if not, create a new one.
+
+If a cache is found, then it is loaded. We can this skip subsequent steps like installing Poetry by adding `if` condition to the step that would have performed that work.
+
 # Others
 
 ## Running dbt from python
