@@ -1,6 +1,10 @@
 FROM python:3.11.10-slim-bullseye
 
-ENV PATH=$PATH:/root/google-cloud-sdk/bin
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    POETRY_HOME="/opt/poetry" \
+    POETRY_NO_INTERACTION=1
+ENV PATH="$PATH:$POETRY_HOME/bin:/root/google-cloud-sdk/bin"
 
 # Install necessary packages
 RUN apt update && \
@@ -9,6 +13,7 @@ RUN apt update && \
     apt-get install apt-transport-https ca-certificates gnupg curl -y && \
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - && \
     apt-get update && apt-get install google-cloud-sdk -y && \
+    curl -sSL https://install.python-poetry.org | python3 - --version 1.8.3 && \
     rm -rf /var/lib/apt/lists/*
 
 # Install zsh
@@ -22,14 +27,17 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
     chsh -s $(which zsh)
 
 ## Install dependencies
-COPY requirements.txt requirements_dev.txt ./
-RUN pip install --upgrade pip --no-cache && \
-    pip install --no-cache-dir -r requirements.txt -r requirements_dev.txt
+COPY poetry.lock pyproject.toml ./
+RUN poetry config virtualenvs.create true && \
+    poetry config virtualenvs.in-project true && \
+    poetry install --no-cache --no-interaction --no-root && \
+    rm -rf ~/.cache/pypoetry/artifacts
+ENV PATH="$PATH:.venv/bin"
 
 # Set up pre-commit
 COPY .pre-commit-config.yaml .pre-commit-config.yaml
 COPY .git .git
 RUN git config --global --add safe.directory /workspaces/dbt-beyond-the-basics && \
-    pre-commit install-hooks
+    poetry run pre-commit install-hooks
 
 COPY . .

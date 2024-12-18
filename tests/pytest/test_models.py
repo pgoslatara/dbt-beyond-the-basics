@@ -104,9 +104,7 @@ def test_models_marts_must_have_monitors(manifest_json: dict) -> None:
         if "marts" in v["config"]["tags"]
     ]
 
-    with open(
-        Path(Path(__file__).parent.parent.parent, "scripts/mart_monitor_queries.yml")
-    ) as f:
+    with open(Path(Path(__file__).parent.parent.parent, "scripts/mart_monitor_queries.yml")) as f:
         query_data = yaml.safe_load(f)
 
     models_with_monitors = [x["model_name"] for x in query_data["query_data"]]
@@ -141,18 +139,12 @@ def test_model_names() -> None:
                 regex_pattern = rf"(base|stg)_{rel_dir[-2]}__[a-z0-9_]*\.(sql){{1}}"
             elif len(rel_dir) == 4:
                 # 2 level hierarchy
-                regex_pattern = (
-                    rf"(base|stg)_{rel_dir[-3]}_{rel_dir[-2]}__[a-z0-9_]*\.(sql){{1}}"
-                )
+                regex_pattern = rf"(base|stg)_{rel_dir[-3]}_{rel_dir[-2]}__[a-z0-9_]*\.(sql){{1}}"
             else:
-                raise ValueError(
-                    "./models/staging only support 1 or 2 directory levels."
-                )
+                raise ValueError("./models/staging only support 1 or 2 directory levels.")
 
         elif "intermediate" in rel_dir:
-            assert (
-                len(rel_dir) == 3
-            ), "./models/intermediate only support 1 directory level."
+            assert len(rel_dir) == 3, "./models/intermediate only support 1 directory level."
             regex_pattern = r"int_[a-z0-9_]*\.(sql){1}"
 
         elif "marts" in rel_dir:

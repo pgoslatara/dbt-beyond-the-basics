@@ -85,6 +85,5 @@ def test_lineage_staging_upstream(manifest_json: dict) -> None:
                     ]
                     or upstream_node.startswith("model.beyond_basics.base_")
                     or upstream_node.split(".")[1] != "beyond_basics"
-                    or "utilities"
-                    in manifest_json["nodes"][upstream_node]["config"]["tags"]
+                    or "utilities" in manifest_json["nodes"][upstream_node]["config"]["tags"]
                 ), f"{k} depends on a node ({upstream_node}) that is not a seed, source or base_* model, this is not permitted"

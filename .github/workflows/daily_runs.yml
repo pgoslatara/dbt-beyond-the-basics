@@ -16,6 +16,7 @@ on:
 
 env:
   DBT_PROFILES_DIR: "."
+  POETRY_VERSION: "1.8.3"
 
 jobs:
   daily_run_stg:
@@ -28,6 +29,15 @@ jobs:
           ref: stg
 
       - uses: actions/setup-python@v5
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+              installer-parallel: true
+              version: ${{ env.POETRY_VERSION }}
+              virtualenvs-create: false
+              virtualenvs-in-project: true
+
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
 
@@ -42,7 +52,7 @@ jobs:
           gcloud config set project beyond-basics-stg
 
       - name: Install python packages
-        run: pip install -r requirements.txt
+        run: poetry install --no-interaction --no-ansi
 
       - name: dbt seed
         run: dbt seed --target stg
@@ -65,6 +75,14 @@ jobs:
 
       - uses: actions/setup-python@v5
 
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+              installer-parallel: true
+              version: ${{ env.POETRY_VERSION }}
+              virtualenvs-create: false
+              virtualenvs-in-project: true
+
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
 
@@ -79,7 +97,7 @@ jobs:
           gcloud config set project beyond-basics-prd
 
       - name: Install python packages
-        run: pip install -r requirements.txt
+        run: poetry install --no-interaction --no-ansi
 
       - name: dbt seed
         run: dbt seed --target prd
