@@ -5,6 +5,9 @@ on:
     - cron: "0 1 * * *"
   workflow_dispatch:
 
+env:
+  POETRY_VERSION: "1.8.3"
+
 jobs:
   cleanup_stg:
     runs-on: ubuntu-latest
@@ -15,6 +18,14 @@ jobs:
           ref: stg
 
       - uses: actions/setup-python@v5
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+              installer-parallel: true
+              version: ${{ env.POETRY_VERSION }}
+              virtualenvs-create: false
+              virtualenvs-in-project: true
 
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
@@ -30,7 +41,7 @@ jobs:
           gcloud config set project beyond-basics-stg
 
       - name: Install python packages
-        run: pip install -r requirements.txt -r requirements_dev.txt
+        run: poetry install --no-interaction --no-ansi
 
       - run: python ./scripts/drop_unused_bq_resources.py --dataset_pattern "cicd_" --environment stg
 
@@ -43,6 +54,14 @@ jobs:
           ref: prd
 
       - uses: actions/setup-python@v5
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+              installer-parallel: true
+              version: ${{ env.POETRY_VERSION }}
+              virtualenvs-create: false
+              virtualenvs-in-project: true
 
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
@@ -58,6 +77,6 @@ jobs:
           gcloud config set project beyond-basics-prd
 
       - name: Install python packages
-        run: pip install -r requirements.txt -r requirements_dev.txt
+        run: poetry install --no-interaction --no-ansi
 
       - run: python ./scripts/drop_unused_bq_resources.py --dataset_pattern "cicd_" --environment prd

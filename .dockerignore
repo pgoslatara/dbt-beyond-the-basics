@@ -1,9 +1,0 @@
-.pytest_cache/
-.state/
-.venv/
-dbt_packages/
-logs/
-target/
-.env
-.user.yml
-*.ipynb

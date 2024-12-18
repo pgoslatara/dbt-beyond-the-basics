@@ -78,9 +78,7 @@ def drop_orphaned_dbt_tables(environment: str) -> None:
                     for label, value in table.labels.items()
                     if label == "created_by" and value == "dbt"
                 )
-    logging.info(
-        f"Found {len(bq_tables_with_dbt_label)} tables with tag 'created_by' == 'dbt'..."
-    )
+    logging.info(f"Found {len(bq_tables_with_dbt_label)} tables with tag 'created_by' == 'dbt'...")
 
     orphaned_dbt_tables = [
         x
@@ -91,9 +89,7 @@ def drop_orphaned_dbt_tables(environment: str) -> None:
 
     for i in orphaned_dbt_tables:
         logging.info(f"DROPping table {i.project}.{i.dataset_id}.{i.table_id}...")
-        client.delete_table(
-            f"{i.project}.{i.dataset_id}.{i.table_id}", not_found_ok=True
-        )
+        client.delete_table(f"{i.project}.{i.dataset_id}.{i.table_id}", not_found_ok=True)
 
 
 def main() -> None:
@@ -101,9 +97,7 @@ def main() -> None:
 
     # Parse command line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--dataset_pattern", help="Pattern of datasets to DROP.", required=True
-    )
+    parser.add_argument("--dataset_pattern", help="Pattern of datasets to DROP.", required=True)
     parser.add_argument("--environment", help="The environment to use.", required=True)
     args = parser.parse_args()
 
@@ -112,9 +106,7 @@ def main() -> None:
         "stg",
     ], "Only prd and stg are valid inputs to `environment`."
 
-    drop_cicd_datasets(
-        environment=args.environment, dataset_pattern=args.dataset_pattern
-    )
+    drop_cicd_datasets(environment=args.environment, dataset_pattern=args.dataset_pattern)
     drop_orphaned_dbt_tables(environment=args.environment)
     drop_empty_datasets(environment=args.environment)
 

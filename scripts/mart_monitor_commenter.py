@@ -61,9 +61,7 @@ def compare_manifests_and_comment_impacted_models(
 ) -> None:
     """Download the latest manifest for the env, compare to current manifest.json, add a comment to the PR with impacted models"""
 
-    download_manifest_json(
-        env=env, destination_file_name=manifest_file_name, version="latest"
-    )
+    download_manifest_json(env=env, destination_file_name=manifest_file_name, version="latest")
 
     directly_impacted_models = sorted(
         run_dbt_command(
@@ -79,9 +77,7 @@ def compare_manifests_and_comment_impacted_models(
         )
     )
     logging.info(f"{indirectly_impacted_models=}")
-    indirect_md = "\n".join(
-        [f'| {x.split(".")[-1]} |' for x in indirectly_impacted_models]
-    )
+    indirect_md = "\n".join([f'| {x.split(".")[-1]} |' for x in indirectly_impacted_models])
 
     with Path("./target/manifest.json").open() as f:
         manifest_json = json.load(f)
@@ -139,9 +135,7 @@ Impacted exposures:
 
 
 @retry(tries=3, delay=5)
-def fetch_results_from_bigquery(
-    query_template: str, cicd_dataset: str, model_name: str
-) -> list:
+def fetch_results_from_bigquery(query_template: str, cicd_dataset: str, model_name: str) -> list:
     """Run query across all environments in BigQuery and return results"""
 
     # Fetch dataset from manifest.json
@@ -268,14 +262,10 @@ def format_results(results: list) -> list:
     return data
 
 
-def run_monitor(
-    monitor: dict, dbt_dataset: str, pull_request_id: int, target_branch: str
-) -> None:
+def run_monitor(monitor: dict, dbt_dataset: str, pull_request_id: int, target_branch: str) -> None:
     """Run a monitor and post comments to GitHub PR"""
 
-    logging.info(
-        f"{monitor['monitor_name']}: Starting process for {monitor['monitor_name']}..."
-    )
+    logging.info(f"{monitor['monitor_name']}: Starting process for {monitor['monitor_name']}...")
     results = fetch_results_from_bigquery(
         query_template=monitor["query"],
         cicd_dataset=dbt_dataset,
@@ -283,9 +273,7 @@ def run_monitor(
     )
     data = format_results(results)
     markdown_table = transform_list_to_markdown(data, monitor["monitor_name"])
-    delete_github_pr_bot_comments(
-        pull_request_id, target_branch, monitor["monitor_name"]
-    )
+    delete_github_pr_bot_comments(pull_request_id, target_branch, monitor["monitor_name"])
     send_github_pr_comment(pull_request_id=pull_request_id, message=markdown_table)
 
 
@@ -295,10 +283,7 @@ def transform_list_to_markdown(input: list, monitor_name: str) -> str:
     formatted_input = "".join(
         ["".join(x) for x in [v for k, v in input.items() if k != "table_name"]]
     )
-    if (
-        "".join(formatted_input).find("🟡") > 0
-        or "".join(formatted_input).find("🔴") > 0
-    ):
+    if "".join(formatted_input).find("🟡") > 0 or "".join(formatted_input).find("🔴") > 0:
         headers = input["table_name"]
         value_matrix = [v for k, v in input.items() if k != "table_name"]
     else:
@@ -318,9 +303,7 @@ def transform_list_to_markdown(input: list, monitor_name: str) -> str:
 
 def fetch_query_data_from_yml() -> List[Mapping[str, str]]:
     """Fetch data from yaml file."""
-    __location__ = os.path.realpath(
-        os.path.join(os.getcwd(), os.path.dirname(__file__))
-    )
+    __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
     with open(os.path.join(__location__, "mart_monitor_queries.yml")) as f:
         query_data = yaml.safe_load(f)
 

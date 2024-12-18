@@ -66,9 +66,7 @@ def call_github_api(
         return r.json()
 
 
-def delete_github_pr_bot_comments(
-    pull_request_id: int, env: str, identifier_text: str
-) -> None:
+def delete_github_pr_bot_comments(pull_request_id: int, env: str, identifier_text: str) -> None:
     """Delete all comments on a PR from specified bot containing a specific text string"""
 
     page = 1
@@ -77,8 +75,7 @@ def delete_github_pr_bot_comments(
     bot_comments = [
         x
         for x in comments_data
-        if x["body"].find(identifier_text) >= 0
-        and x["user"]["login"] == "github-actions[bot]"
+        if x["body"].find(identifier_text) >= 0 and x["user"]["login"] == "github-actions[bot]"
     ]
     logging.debug(f"Retrieved {len(bot_comments)} comments from bot...")
 
@@ -99,9 +96,7 @@ def delete_github_pr_comment(comment_id: int) -> None:
     assert response["success"] is True
 
 
-def download_manifest_json(
-    env: str, destination_file_name: str, version: str = "latest"
-) -> None:
+def download_manifest_json(env: str, destination_file_name: str, version: str = "latest") -> None:
     """Download the latest or previous manifest.json from GCS"""
 
     assert version in {
@@ -178,9 +173,7 @@ def get_gcp_auth_clients(env: str) -> dict:
 
     project_id = f"beyond-basics-{env}"
 
-    __location__ = os.path.realpath(
-        os.path.join(os.getcwd(), os.path.dirname(__file__))
-    )
+    __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
     service_account_key_env_path = os.path.join(
         __location__[: __location__.rfind("/")],
         f"service_account_{env}.json",
@@ -279,9 +272,7 @@ def set_logging_options() -> None:
 
 
 @retry(tries=3, delay=5)
-def upload_to_gcs(
-    env: str, bucket_name: str, upload_directory: str, file_to_upload: str
-):
+def upload_to_gcs(env: str, bucket_name: str, upload_directory: str, file_to_upload: str):
     """Upload a file to a Google Cloud Storage bucket"""
 
     client = get_gcp_auth_clients(env)["storage"]
