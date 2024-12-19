@@ -1,0 +1,4 @@
+
+
+select *
+from `beyond-basics-prd`.`intermediate_finance`.`int_orders`
