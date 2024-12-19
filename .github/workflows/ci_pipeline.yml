@@ -145,6 +145,9 @@ jobs:
 
       - run: if [ "$DESTINATION_BRANCH" == "stg" ]; then poetry run python ./scripts/mart_monitor_commenter.py --dbt_dataset $DBT_DATASET --pull_request_id ${{ github.event.number }} --target_branch $DESTINATION_BRANCH; else echo "Only runs for PRs to stg"; fi
 
+      - name: Ensure ERD can be generated
+        run: poetry run python ./scripts/generate_marts_erd_diagram.py
+
   dev_container:
     runs-on: ubuntu-22.04
     steps:
