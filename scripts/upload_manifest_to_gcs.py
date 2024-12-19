@@ -44,9 +44,7 @@ def main() -> None:
 
     if current_branch_head_hash == get_latest_commit_hash(target_branch):
         # Workflows can be re-run, if the HEAD of the branch in the workflow is not the HEAD of the target_branch then no upload is performed.
-        logging.info(
-            "Current branch is the HEAD of the target branch, proceeding to upload..."
-        )
+        logging.info("Current branch is the HEAD of the target branch, proceeding to upload...")
         upload_to_gcs(
             env=target_branch,
             bucket_name=f"beyond-basics-dbt-manifests-{target_branch}",

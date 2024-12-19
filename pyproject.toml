@@ -1,2 +1,70 @@
+[tool.black]
+line-length = 99
+include = '/project$|\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.eggs
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | \.vscode
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+
 [tool.sqlfmt]
 exclude=["target/**/*", "dbt_packages/**/*"]
+
+[tool.poetry]
+authors = ["Padraic Slattery <pgoslatara@gmail.com>"]
+description = "Showcase of advanced use cases relating to CI in dbt"
+keywords = [
+  "python",
+  "sql",
+  "Continuous Integration",
+  "dbt",
+]
+license ="MIT"
+maintainers = ["Padraic Slattery <pgoslatara@gmail.com>"]
+name = "dbt-beyond-the-basics"
+package-mode = false
+readme = "README.md"
+repository = "https://github.com/pgoslatara/dbt-beyond-the-basics"
+version = "0.0.0"
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.12"
+dbt-core=">=1.9.0,<1.10.0"
+dbt-bigquery=">=1.9.0,<1.10.0"
+
+[tool.poetry.group.dev.dependencies]
+autoflake = "*"
+black = "*"
+dbt-bouncer = "*"
+dbt-coverage = "*"
+duckdb = "*"
+flake8 = "*"
+GitPython = "*"
+google-cloud-bigquery = "*"
+google-cloud-storage = "*"
+isort = "*"
+pre-commit = "*"
+pyarrow = "*"
+pytablewriter = "*"
+pytest = "*"
+pytest-xdist = "*"
+pyupgrade = "*"
+retry = "*"
+"shandy-sqlfmt" = {version = "*", extras=["shandy-sqlfmt[jinjafmt]"]}
+
+[build-system]
+requires = ["poetry-core>=1.9.0"]
+build-backend = "poetry.core.masonry.api"

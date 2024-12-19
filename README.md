@@ -19,6 +19,8 @@ A repository demonstrating advanced use cases of dbt in the following areas:
 
 - [Dev Containers](#dev-containers)
 
+- [Python](#python)
+
 - [Others](#others)
 
 See something incorrect, open an [issue](https://github.com/pgoslatara/dbt-beyond-the-basics/issues/new)!
@@ -74,6 +76,38 @@ Continuous Integration (CI) is the process of codifying standards, these range f
             args: [--pattern, "(base_|stg_).*"]
             files: models/staging/
     ```
+
+### The advantage of local hooks
+
+Most pre-commit hooks are "isolated" hooks in the sense that pre-commit creates a dedicated, isolated environment for each hook to run in. In effect this means that the python environment the hook runs in is not the same as the python environment you are working in locally.
+
+For example, you `pip install` the `sqlfmt` package and your local environment now has version `0.23.0` installed. You may run `sqlfmt models` to format your dbt models after making some changes. When you are ready to commit your changes pre-commit also runs `sqlfmt`, however it will use a different python environment to do so, potentially resulting in conflicting changes.
+
+One way to avoid this is to use `local` hooks. These are hooks that run in the same python environment that you are developing in. For example, this "isolated" hook:
+
+```yaml
+# .pre-commit-config.yaml
+- repo: https://github.com/tconbeer/sqlfmt
+    rev: v0.24.0
+    hooks:
+    - id: sqlfmt
+```
+
+Can be changed to:
+
+```yaml
+# .pre-commit-config.yaml
+- repo: local
+hooks:
+    - id: sqlfmt
+    entry: python -m sqlfmt
+    language: system
+    name: Run sqlfmt
+    pass_filenames: true
+    types_or: [jinja, sql]
+```
+
+The primary advantage of this change is that your local environment and pre-commit are now configured to use the same python environment and the same `sqlfmt` version. A tangential benefit is that updates to packages used in pre-commit now only require updating of the python package. Previously this would have required updating both the python package and the pre-commit hook, a process which if not done correctly could result in a mis-matched setup.
 
 ## dbt Artifacts and Pytest
 
@@ -264,9 +298,105 @@ TODO
 
 # Dev Containers
 
-[![Open in Dev Containers](https://img.shields.io/static/v1?label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/pgoslatara/dbt-beyond-the-basics)
+[Dev containers](https://containers.dev/) provide a Docker-ised development environment and are natively supported by both PyCharm and VSCode, allowing developers to continue using their preferred IDE. Using a dev container allows all developers to work in a standardised environment (including VSCode extensions!), minimising setup issues, reducing the need for manual configuration and allowing for a consistent development experience. Dev containers are useful in workplaces where developers use different OS's (think Mac and Windows), where developers may not be familiar with setting up python environments and where connecting to the underlying database requires non-standard configuration (SQL Server sometimes requires specific drivers to be installed). You can even use the [devcontainers/ci](https://github.com/devcontainers/ci) Github Action to use your standardised dev container in your GitHub workflows.
 
-TODO
+To use a dev container you must have [Docker](https://docs.docker.com/engine/install/) (or another container manager like [Podman](https://code.visualstudio.com/remote/advancedcontainers/docker-options#_podman)) installed, while some workplaces may restrict this due to security concerns, container managers are very widely used engineering tools and when used correctly can be used for more than just dev containers.
+
+To view the dev container configuration for this project, view the [.devcontainer](https://github.com/pgoslatara/dbt-beyond-the-basics/tree/stg/.devcontainer) directory.
+
+To open this repository in a dev container:
+
+1. Click this button: [![Open in dev container](https://img.shields.io/static/v1?label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/pgoslatara/dbt-beyond-the-basics)
+
+1. Clone this repo to your local machine, open the repository in VSCode and from the command palette select `Dev Containers: Reopen in Container`.
+
+# Python
+
+dbt runs in a python environment, therefore the configuration of your python environment is a critical part of a dbt project.
+
+## The `.python-version` file
+
+There are many different versions of python, and there are many different parts of a dbt project that require access to python. One widely supported way of managing the python version is to create a `.python-version` file in the root of your project. This file contains the python version you want to use, and is as simple as:
+
+```shell
+3.11.10
+```
+
+Python has a large ecosystem of tools, many of these will use the `.python-version` file if it is present:
+
+* `actions/setup-python`: A GitHub Action that installs python in the ephemeral environment used by a GitHub workflow.
+* `pyenv`: A tool for installing multiple versions of python.
+* `uv`: A package manager for python.
+
+## Package Managers
+
+This repository uses [Poetry](https://python-poetry.org/) as a python package manager. Package managers are used to install and manage python packages, one of their primary benefits is the generation of a lock file, a file detailing the exact version of every installed package. For Poetry, this is the `poetry.lock` file. This helps control what are known as transitive dependencies, dependencies that are installed as a result of installing a package. For example, if I was using `pip` to install packages I may specify `dbt-core>=1.8,<1.9`. With Poetry I would specify `dbt-core=">=1.8.0,<1.9.0"`. The installed version of `dbt-core` will be the same using both methods. However `dbt-core` has dependencies (such as `click`, `logbook`, etc.). With `pip` I have no control over the version of these dependencies, with Poetry I do as the lock file ensures even these dependencies are recorded.
+
+Note that there are several other python package managers available such as `hatch`, `pdm` and `uv`.
+
+## Caching in GitHub Workflows
+
+GitHub workflows initialise in an almost empty environment, just your repository contents and some standard CLI tools (think `gh`, GitHub's own CLI tool). One common step is to recreate the python virtual environment in the workflow environment. This involves downloading and installing all the python dependencies into the `.venv` directory. But what if you are re-running a CI workflow, or what if your dependencies are the same as your previous run? In these cases you are repeating work that has already been done.
+
+One way to avoid this is to use caching, the concept of storing the output of your work and reusing it in a later run. GitHub Actions has a built in caching mechanism, you can specify a cache key and a path to cache. You can even view the existing caches for this repo [here](https://github.com/pgoslatara/dbt-beyond-the-basics/actions/caches).
+
+dbt repositories can benefit from caching in two areas:
+
+1. The python virtual environment stored in `.venv`.
+1. The Poetry executable stored in `/home/runner/.local`.
+
+Both of these are the result of work we perform in almost every GitHub workflow run. And both of these can be easily invalidated when necessary; the virtual environment when the contents of `poetry.lock` change and the Poetry executable when the version of Poetry changes.
+
+To enable caching, let's take an example workflow snippet:
+
+```yaml
+
+env:
+  POETRY_VERSION: "1.8.3"
+
+jobs:
+  auto-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        id: setup-python
+
+      - name: Load cached Poetry installation
+        id: cached-poetry
+        uses: actions/cache@v4
+        with:
+              path: /home/runner/.local
+              key: poetry-cache-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ env.POETRY_VERSION }}
+
+      - name: Install Poetry
+        if: steps.cached-poetry.outputs.cache-hit != 'true'
+        uses: snok/install-poetry@v1
+        with:
+              installer-parallel: true
+              version: ${{ env.POETRY_VERSION }}
+              virtualenvs-create: false
+              virtualenvs-in-project: true
+
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v4
+        with:
+              path: .venv
+              key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install python packages
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Whatever else we want to do
+        run: ...
+```
+
+Every cache requires a unique identifier, this `key` should contain a reference to the parameters the cache is dependent upon. For the Poetry cache, this is the Poetry version and the python version and the operating system. For the virtual environment cache, this is the operating system, the python version and the hash of the `poetry.lock` file. By combining these parameters we create a key that allows us to check if a suitable cache already exists, and if not, create a new one.
+
+If a cache is found, then it is loaded. We can this skip subsequent steps like installing Poetry by adding `if` condition to the step that would have performed that work.
 
 # Others
 

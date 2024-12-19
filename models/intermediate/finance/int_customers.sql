@@ -1,9 +1,9 @@
 with
-    customers as (select * from {{ ref('stg_jaffle_shop__customers') }}),
+    customers as (select * from {{ ref("stg_jaffle_shop__customers") }}),
 
-    orders as (select * from {{ ref('stg_jaffle_shop__orders') }}),
+    orders as (select * from {{ ref("stg_jaffle_shop__orders") }}),
 
-    payments as (select * from {{ ref('stg_stripe__payments') }}),
+    payments as (select * from {{ ref("stg_stripe__payments") }}),
 
     customer_orders as (
 

@@ -5,7 +5,7 @@ with
     Normally we would select from the table here, but we are using seeds to load
     our data in this project
     #}
-        select * from {{ ref('seed_jaffle_shop__customers') }}
+        select * from {{ ref("seed_jaffle_shop__customers") }}
 
     ),
 

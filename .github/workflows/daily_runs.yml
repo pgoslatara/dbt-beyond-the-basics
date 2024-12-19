@@ -16,11 +16,12 @@ on:
 
 env:
   DBT_PROFILES_DIR: "."
+  POETRY_VERSION: "1.8.3"
 
 jobs:
   daily_run_stg:
     if: contains(fromJSON('["stg", ""]'), github.event.inputs.env_to_run)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v4
@@ -28,8 +29,23 @@ jobs:
           ref: stg
 
       - uses: actions/setup-python@v5
+        id: setup-python
+
+      - name: Load cached Poetry installation
+        id: cached-poetry
+        uses: actions/cache@v4
         with:
-          python-version: "3.11"
+              path: /home/runner/.local
+              key: poetry-cache-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ env.POETRY_VERSION }}
+
+      - name: Install Poetry
+        if: steps.cached-poetry.outputs.cache-hit != 'true'
+        uses: snok/install-poetry@v1
+        with:
+              installer-parallel: true
+              version: ${{ env.POETRY_VERSION }}
+              virtualenvs-create: true
+              virtualenvs-in-project: true
 
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
@@ -44,22 +60,30 @@ jobs:
           gcloud auth activate-service-account dbt-cicd@beyond-basics-stg.iam.gserviceaccount.com --key-file=./service_account.json && \
           gcloud config set project beyond-basics-stg
 
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v4
+        with:
+              path: .venv
+              key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
       - name: Install python packages
-        run: pip install -r requirements.txt
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-ansi
 
       - name: dbt seed
-        run: dbt seed --target stg
+        run: poetry run dbt seed --target stg
         env:
           DBT_DATASET: "stg"
 
       - name: dbt build
-        run: dbt build --exclude "test_type:unit" --target stg
+        run: poetry run dbt build --exclude "test_type:unit" --target stg
         env:
           DBT_DATASET: "stg"
 
   daily_run_prd:
     if: contains(fromJSON('["prd", ""]'), github.event.inputs.env_to_run)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v4
@@ -67,8 +91,23 @@ jobs:
           ref: prd
 
       - uses: actions/setup-python@v5
+        id: setup-python
+
+      - name: Load cached Poetry installation
+        id: cached-poetry
+        uses: actions/cache@v4
         with:
-          python-version: "3.11"
+              path: /home/runner/.local
+              key: poetry-cache-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ env.POETRY_VERSION }}
+
+      - name: Install Poetry
+        if: steps.cached-poetry.outputs.cache-hit != 'true'
+        uses: snok/install-poetry@v1
+        with:
+              installer-parallel: true
+              version: ${{ env.POETRY_VERSION }}
+              virtualenvs-create: true
+              virtualenvs-in-project: true
 
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
@@ -83,15 +122,23 @@ jobs:
           gcloud auth activate-service-account dbt-cicd@beyond-basics-prd.iam.gserviceaccount.com --key-file=./service_account.json && \
           gcloud config set project beyond-basics-prd
 
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v4
+        with:
+              path: .venv
+              key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
       - name: Install python packages
-        run: pip install -r requirements.txt
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-ansi
 
       - name: dbt seed
-        run: dbt seed --target prd
+        run: poetry run dbt seed --target prd
         env:
           DBT_DATASET: "prd"
 
       - name: dbt build
-        run: dbt build --exclude "test_type:unit" --target prd
+        run: poetry run dbt build --exclude "test_type:unit" --target prd
         env:
           DBT_DATASET: "prd"

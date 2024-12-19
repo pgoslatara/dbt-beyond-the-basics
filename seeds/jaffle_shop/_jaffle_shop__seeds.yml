@@ -11,11 +11,32 @@ seeds:
             tests:
                 - unique
                 - not_null
+          - name: first_name
+            description: "The first name of the customer"
+            tests:
+            - not_null
+          - name: last_name
+            description: "The last name of the customer"
+            tests:
+            - not_null
 
     - name: seed_jaffle_shop__orders
       description: Sample of 100 orders
       columns:
           - name: id
+            description: "The primary key for this table"
             tests:
                 - unique
                 - not_null
+          - name: user_id
+            description: "The id of the user who placed this order"
+            tests:
+            - not_null
+          - name: order_date
+            description: "The date with the time when the order was placed"
+            tests:
+            - not_null
+          - name: status
+            description: "The current status of the order"
+            tests:
+            - not_null

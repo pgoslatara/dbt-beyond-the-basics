@@ -5,7 +5,7 @@ with
     Normally we would select from the table here, but we are using seeds to load
     our data in this project
     #}
-        select * from {{ ref('seed_stripe__payments') }}
+        select * from {{ ref("seed_stripe__payments") }}
 
     ),
 
@@ -20,7 +20,7 @@ with
             end as is_voucher,
 
             -- `amount` is currently stored in cents, so we convert it to dollars
-            {{ cents_to_dollars('amount') }} as amount
+            {{ cents_to_dollars("amount") }} as amount
 
         from source
 
