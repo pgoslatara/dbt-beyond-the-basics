@@ -166,7 +166,6 @@ jobs:
         - run: |
             git config user.name "github-actions"
             git config user.email "actions@github.com"
-            git rm -r .
             git add ./target/mermaid.png
             git commit -m "Adding ERD diagram"
             git push -f origin erd-diagram 
