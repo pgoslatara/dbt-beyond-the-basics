@@ -1,4 +1,92 @@
-name: Publish dbt docs
+# name: Publish dbt docs
+
+# on:
+#   push:
+#     branches:
+#       - prd
+#   workflow_dispatch:
+
+# env:
+#     DBT_DATASET: "prd"
+#     DBT_PROFILES_DIR: "."
+#     POETRY_VERSION: "1.8.3"
+
+# jobs:
+#   publish-dbt-docs:
+#     name: Publish dbt Docs as GitHub Page
+#     runs-on: ubuntu-latest
+#     steps:
+#         - uses: actions/checkout@v4
+
+#         - uses: actions/setup-python@v5
+#           id: setup-python
+
+#         - name: Load cached Poetry installation
+#           id: cached-poetry
+#           uses: actions/cache@v4
+#           with:
+#                 path: /home/runner/.local
+#                 key: poetry-cache-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ env.POETRY_VERSION }}
+
+#         - name: Install Poetry
+#           if: steps.cached-poetry.outputs.cache-hit != 'true'
+#           uses: snok/install-poetry@v1
+#           with:
+#                 installer-parallel: true
+#                 version: ${{ env.POETRY_VERSION }}
+#                 virtualenvs-create: true
+#                 virtualenvs-in-project: true
+
+#         - name: 'Set up Cloud SDK'
+#           uses: 'google-github-actions/setup-gcloud@v2'
+
+#         - name: Save prd GCP credentials to runner
+#           run: |
+#             echo "${{ secrets.DBT_CICD_SA_SECRET_KEY_PRD_BASE64_ENCODED }}" | base64 --decode >> ./service_account.json && \
+#             export GOOGLE_APPLICATION_CREDENTIALS="$(pwd)/service_account.json"
+
+#         - name: Authenticate with GCP
+#           run: |
+#             gcloud auth activate-service-account dbt-cicd@beyond-basics-prd.iam.gserviceaccount.com --key-file=./service_account.json && \
+#             gcloud config set project beyond-basics-prd
+
+#         - name: Load cached venv
+#           id: cached-poetry-dependencies
+#           uses: actions/cache@v4
+#           with:
+#                 path: .venv
+#                 key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+#         - name: Install python packages
+#           if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+#           run: poetry install --no-interaction --no-ansi
+
+#         - name: Generate dbt docs
+#           run: |
+#             poetry run dbt deps --target prd
+#             poetry run dbt docs generate --target prd
+
+#         - name: Deploy to GitHub Pages
+#           uses: peaceiris/actions-gh-pages@v4
+#           with:
+#             github_token: ${{ secrets.GITHUB_TOKEN }}
+#             publish_dir: ./target
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+name: Publish ERD diagram
 
 on:
   push:
@@ -12,8 +100,10 @@ env:
     POETRY_VERSION: "1.8.3"
 
 jobs:
-  publish-dbt-docs:
-    name: Publish dbt Docs as GitHub Page
+  publish-erd-diagram:
+    name: Publish ERD diagram
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v4
@@ -66,8 +156,30 @@ jobs:
             poetry run dbt deps --target prd
             poetry run dbt docs generate --target prd
 
-        - name: Deploy to GitHub Pages
-          uses: peaceiris/actions-gh-pages@v4
+        - name: Generate ERD diagram
+          run: poetry run python ./scripts/generate_marts_erd_diagram.py
+  
+        - uses: actions/checkout@v4
           with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            publish_dir: ./target
+            ref: erd-diagram
+        
+        - run: |
+            git config user.name "github-actions"
+            git config user.email "actions@github.com"
+            git rm -r .
+            git add ./target/mermaid.png
+            git commit -m "Adding ERD diagram"
+            git push -f origin erd-diagram 
+
+
+        # - uses: EndBug/add-and-commit@v9
+        #   with:
+        #     add: ./target/mermaid.png
+        #     author_name: Github Actions
+        #     author_email: actions@github.com
+        #     new_branch: erd-diagram
+        #     # pull: '--rebase --autostash erd-diagram'
+        #     push: true #'origin erd-diagram --set-upstream --force'
+        #     remove: '-r .'
+        #   # env:
+        #   #   GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
