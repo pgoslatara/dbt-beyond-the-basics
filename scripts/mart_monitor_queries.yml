@@ -15,6 +15,19 @@ query_data:
         sum(customer_lifetime_value) as sum_customer_lifetime_value,
       from {{ table_name }}
 
+  - monitor_name: dim_orders monitor
+    model_name: dim_orders
+    query: |
+      select
+        '{{ env }}' as table_name,
+        count(*) as row_cnt,
+        count(distinct order_id) as distinct_order_id,
+        count(distinct customer_id) as distinct_customer_id,
+        count(distinct order_date) as distinct_order_date,
+        count(distinct status) as distinct_status,
+        count(distinct amount) as sum_amount,
+      from {{ table_name }}
+
   - monitor_name: fct_bitcoin_blocks monitor
     model_name: fct_bitcoin_blocks
     query: |

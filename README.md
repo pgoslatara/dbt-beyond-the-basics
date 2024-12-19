@@ -17,9 +17,15 @@ A repository demonstrating advanced use cases of dbt in the following areas:
 
 - [Continuous Deployment (CD)](#continuous-deployment)
 
+    - [dbt Docs](#dbt-docs)
+
 - [Dev Containers](#dev-containers)
 
 - [Python](#python)
+
+    - [The `.python-version` file](#the-python-version-file)
+    - [Package Managers](#package-managers)
+    - [Caching in GitHub Workflows](#caching-in-github-workflows)
 
 - [Others](#others)
 
@@ -294,7 +300,20 @@ A downside of building all models in a CI pipeline is increased run time and res
 
 # Continuous Deployment
 
-TODO
+## dbt Docs
+
+dbt Docs is a static website that exposes all documentation relating to your dbt project. Normally this is generated and served locally via:
+
+```bash
+dbt docs generate
+dbt docs serve
+```
+
+This works well for the dbt developer as their local python environment is already set up to support these commands. But this isn't an option for some data consumers like the head of marketing who wants to understand what a metric means or a financial analysts looking for the most suitable table to query. For these data consumers we can expose the dbt Docs website via a web server, in our case we can use [GitHub Pages](https://pages.github.com/).
+
+Every time we push to our `prd` branch, the [cd_dbt_docs.yml](https://github.com/pgoslatara/dbt-beyond-the-basics/blob/prd/.github/workflows/cd_dbt_docs.yml) workflow is triggered. This workflow runs the above dbt commands and uses the [peaceiris/actions-gh-pages](https://github.com/peaceiris/actions-gh-pages) GitHub Action to expose the generated dbt Docs website.
+
+GitHub Pages is awesome as it is free for personal, public repositories (like this repository) and also for organisations with an Enterprise plan. If your organisation has GitHub Pages, these are placed behind the same SSO as your GitHub repositories, providing a safe way of exposing dbt Docs to members of your organisation. If you do not use GitHub, there are many alternatives available such as Cloudflare and Netlify, in addition AWS, Azure and GCP can all serve static websites from their cloud storage products.
 
 # Dev Containers
 
