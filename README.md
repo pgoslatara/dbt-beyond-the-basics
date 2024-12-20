@@ -347,6 +347,22 @@ How is this created?
 
         This is the URL I reference for the above image.
 
+## Docker-ising dbt
+
+"Docker-ising" refers to building a Docker image that can run your dbt project. This is useful when your orchestration process involves running a command in a pre-built container, think Airflow, Cloud Build, Dagster or any other modern Cloud orchestration tool. When building a Docker image for dbt we want to follow several guidelines:
+
+* The image should be as small as is reasonable achievable. Given that our orchestrator may pull the image many times over the course of a single day (e.g. hourly runs or one pull per task), having a smaller image reduces the amount of data that needs to moved (and resulting wait times and cloud costs). There are several ways to achieve this:
+    * As the base image, use a "slim" python image rather than a "full" image.
+    * If you use a python package manager like Poetry, use [multi-stage builds](https://docs.docker.com/build/building/multi-stage/). This allows your image to be built using Poetry but does not include Poetry in the final image (as it is not necessary to run dbt).
+    * Only install the python dependencies you need, i.e. no dev dependencies.
+* The image should not contain any sensitive data like passwords or credentials. If these are required, they should be passed at build time as [build secrets](https://docs.docker.com/build/building/secrets/).
+* The image should make good use of Docker layers and caching to reduce the time it takes to build the image. The [docker/build-push-action](https://github.com/docker/build-push-action) natively supports caching Docker layers in GitHub Actions.
+* The image should not require any setup commands to be used. For dbt this means that the image already contains all required dbt packages and the dbt project has been parsed.
+
+In CI, the [ci_pipeline.yml](./.github/workflows/ci_pipeline.yml) workflow builds a Docker image and runs a `dbt parse` command on it to validate that the image can run dbt commands.
+
+In CD, although not implemented in this repository, the `docker/build-push-action` GitHub Action can be used to push the image to an image registry such as GCP's Artifact Registry or AWS's ECR. From here the image can be downloaded by your orchestration tool. It is common to tag images with the SHA of the commit that built the image, in addition you can tag images with the environment they are intended to be used in. For example, an image will initially have the commit SHA and `stg` tag, it will then be used in our staging environment, after a deployment the `stg` tag will be replaced with a `prd` tag and the image will be used in production. When a subsequent deployment to production is performed the `prd` tag is re-assigned to a newer image and the original image retains only its SHA tag. At all times there is one image with a `stg` tag and one image with a `prd` tag. Immediately after a deployment from staging to production, one image will have both tags (i.e. staging and production will use the same image).
+
 # Dev Containers
 
 [Dev containers](https://containers.dev/) provide a Docker-ised development environment and are natively supported by both PyCharm and VSCode, allowing developers to continue using their preferred IDE. Using a dev container allows all developers to work in a standardised environment (including VSCode extensions!), minimising setup issues, reducing the need for manual configuration and allowing for a consistent development experience. Dev containers are useful in workplaces where developers use different OS's (think Mac and Windows), where developers may not be familiar with setting up python environments and where connecting to the underlying database requires non-standard configuration (SQL Server sometimes requires specific drivers to be installed). You can even use the [devcontainers/ci](https://github.com/devcontainers/ci) Github Action to use your standardised dev container in your GitHub workflows.
