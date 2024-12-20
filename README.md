@@ -315,6 +315,38 @@ Every time we push to our `prd` branch, the [cd_dbt_docs.yml](https://github.com
 
 GitHub Pages is awesome as it is free for personal, public repositories (like this repository) and also for organisations with an Enterprise plan. If your organisation has GitHub Pages, these are placed behind the same SSO as your GitHub repositories, providing a safe way of exposing dbt Docs to members of your organisation. If you do not use GitHub, there are many alternatives available such as Cloudflare and Netlify, in addition AWS, Azure and GCP can all serve static websites from their cloud storage products.
 
+## Entity Relationship Diagram (ERD)
+
+An entity relationship diagram (ERD) is a visual representation of the relationships between entities in a database. It is a useful tool for understanding the structure of a database and can be used by dbt developers when adding new features and also by analysts when writing queries to answer business questions. For a dbt project, only the `marts` layer is exposed to end users, hence the ERD only needs to include this layer. Here is the ERD for this dbt project (it's rather basic, a real-world dbt project would have a significantly busier ERD):
+
+![](https://github.com/pgoslatara/dbt-beyond-the-basics/blob/erd-diagram/target/mermaid.png?raw=true)
+
+How is this created?
+
+1. In our `marts` layer we have defined `relationships` tests. For example, the `customer_id` column in `dim_customers` is related to the `customer_id` column in `dim_orders`.
+
+1. Using [dbterd](https://github.com/datnguye/dbterd) we can generate a [mermaid](https://github.blog/developer-skills/github/include-diagrams-markdown-files-mermaid/) diagram of the `marts` layer including the `relationships`.
+
+1. Using [mermaid-py](https://github.com/ouhammmourachid/mermaid-py) we can convert the mermaid diagram to a png image.
+
+1. Combining the last two steps into a single python script: [./scripts/generate_marts_erd_diagram.py](./scripts/generate_marts_erd_diagram.py).
+
+1. Now the tricky part. I want this diagram in the `README` of my repository. But I don't want every developer to have to run this script before creating their PR, I want the image to be automatically generated and kept up to date. So I do the following:
+
+    1. Using the [cd_erd_diagram.yml](./.github/workflows/cd_erd_diagram.yml) workflow I trigger a GitHub workflow after every merge to `prd`.
+
+    1. This workflow runs the script and generates the ERD image.
+
+    1. The image is then force-pushed to the `erd-diagram` branch. Why? The `prd` branch has branch protection rules that prevent force pushes (this is good practice), so pushing to a different branch avoids this.
+
+    1. I now have an automatically updated ERD available at a static URL:
+
+        ```shell
+        https://github.com/pgoslatara/dbt-beyond-the-basics/blob/erd-diagram/target/mermaid.png?raw=true
+        ```
+
+        This is the URL I reference for the above image.
+
 # Dev Containers
 
 [Dev containers](https://containers.dev/) provide a Docker-ised development environment and are natively supported by both PyCharm and VSCode, allowing developers to continue using their preferred IDE. Using a dev container allows all developers to work in a standardised environment (including VSCode extensions!), minimising setup issues, reducing the need for manual configuration and allowing for a consistent development experience. Dev containers are useful in workplaces where developers use different OS's (think Mac and Windows), where developers may not be familiar with setting up python environments and where connecting to the underlying database requires non-standard configuration (SQL Server sometimes requires specific drivers to be installed). You can even use the [devcontainers/ci](https://github.com/devcontainers/ci) Github Action to use your standardised dev container in your GitHub workflows.
