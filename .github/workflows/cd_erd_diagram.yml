@@ -14,7 +14,9 @@ env:
 jobs:
   publish-erd-diagram:
     name: Publish ERD diagram
-    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    runs-on: ubuntu-22.04
     steps:
         - uses: actions/checkout@v4
 
@@ -67,15 +69,14 @@ jobs:
             poetry run dbt docs generate --target prd
 
         - name: Generate ERD diagram
-          run: |
-            poetry run python ./scripts/generate_marts_erd_diagram.py
-            rm .gitignore
+          run: poetry run python ./scripts/generate_marts_erd_diagram.py
 
-        - uses: EndBug/add-and-commit@v9
-          with:
-            add: ./target/mermaid.png
-            author_name: Github Actions
-            author_email: actions@github.com
-            new_branch: erd-diagram
-            push: true
-            remove: .
+        - name: Commit and push ERD
+          run: |
+            git config user.name "github-actions"
+            git config user.email "actions@github.com"
+            git fetch
+            git checkout erd-diagram
+            git add -f ./target/mermaid.png
+            git commit -m "Adding ERD diagram" --allow-empty
+            git push -f origin erd-diagram
