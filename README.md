@@ -18,6 +18,8 @@ A repository demonstrating advanced use cases of dbt in the following areas:
 - [Continuous Deployment (CD)](#continuous-deployment)
 
     - [dbt Docs](#dbt-docs)
+    - [Entity Relationship Diagram (ERD)](#entity-relationship-diagram-erd)
+    - [Docker-ising dbt](#docker-ising-dbt)
 
 - [Dev Containers](#dev-containers)
 
@@ -28,6 +30,9 @@ A repository demonstrating advanced use cases of dbt in the following areas:
     - [Caching in GitHub Workflows](#caching-in-github-workflows)
 
 - [Others](#others)
+
+    - [Running dbt from python](#running-dbt-from-python)
+    - [Conferences](#conferences)
 
 See something incorrect, open an [issue](https://github.com/pgoslatara/dbt-beyond-the-basics/issues/new)!
 
