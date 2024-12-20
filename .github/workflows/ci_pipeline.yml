@@ -73,6 +73,9 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-ansi
 
+      - name: dbt dep
+        run: poetry run dbt deps
+
       - name: dbt compile
         run: poetry run dbt compile --target $DESTINATION_BRANCH
 
@@ -165,8 +168,55 @@ jobs:
             export GOOGLE_APPLICATION_CREDENTIALS="$(pwd)/service_account.json"cloud auth activate-service-account dbt-cicd@beyond-basics-$DESTINATION_BRANCH.iam.gserviceaccount.com --key-file=./service_account.json
             gcloud config set project beyond-basics-$DESTINATION_BRANCH
             poetry install
+            poetry run dbt deps
             poetry run dbt compile --target $DESTINATION_BRANCH
           env: |
             DBT_DATASET
             DBT_PROFILES_DIR
             DESTINATION_BRANCH
+
+  docker:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+            images: dbt-beyond-the-basics
+            tags: |
+                type=ref,event=branch
+                type=raw,value=${{ github.sha }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Determine python version
+        id: python-version
+        shell: bash
+        run: |
+            export PYTHON_VERSION=$(cat ./.python-version)
+            echo "PYTHON_VERSION: $PYTHON_VERSION"
+            echo "PYTHON_VERSION=$PYTHON_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+            build-args: |
+                "PYTHON_VERSION=${{ steps.python-version.outputs.PYTHON_VERSION }}"
+            cache-from: type=gha
+            cache-to: type=gha,mode=max
+            context: .
+            file: ./Dockerfile
+            load: true
+            push: false
+            tags: ${{ steps.meta.outputs.tags }}
+
+      - name: Test Docker image
+        run: |
+            docker run --rm \
+              --env DBT_DATASET="test" \
+              --volume ~/.config/gcloud:/root/.config/gcloud \
+              dbt-beyond-the-basics:${{ github.sha }} \
+              dbt parse

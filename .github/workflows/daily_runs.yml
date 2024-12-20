@@ -71,6 +71,9 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-ansi
 
+      - name: dbt dep
+        run: poetry run dbt deps
+
       - name: dbt seed
         run: poetry run dbt seed --target stg
         env:
@@ -132,6 +135,9 @@ jobs:
       - name: Install python packages
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-ansi
+
+      - name: dbt dep
+        run: poetry run dbt deps
 
       - name: dbt seed
         run: poetry run dbt seed --target prd
