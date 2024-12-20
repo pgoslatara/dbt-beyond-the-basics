@@ -1,10 +1,9 @@
 import mermaid as mmd
-from click import Command, Context
 from dbterd import default
-from dbterd.adapters.base import Executor
+from dbterd.api import DbtErd
 from mermaid.graph import Graph
 
-erd = Executor(Context(Command(name="run"))).run(
+erd = DbtErd(
     algo=default.default_algo(),
     artifacts_dir="./target",
     dbt="--select",
@@ -14,7 +13,7 @@ erd = Executor(Context(Command(name="run"))).run(
     params={},
     select=["path:models/marts"],
     target="mermaid",
-)
+).get_erd()
 
 mermaid = mmd.Mermaid(Graph("erDiagram", erd))
 mermaid.to_png("./target/mermaid.png")
