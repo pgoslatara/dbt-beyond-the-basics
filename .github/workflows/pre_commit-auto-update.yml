@@ -52,7 +52,9 @@ jobs:
         run: poetry install --no-interaction --no-ansi
 
       - name: dbt docs generate
-        run: poetry run dbt docs generate --target stg
+        run: |
+          poetry run dbt deps
+          poetry run dbt docs generate --target stg
 
       - run: poetry run pre-commit autoupdate
 
