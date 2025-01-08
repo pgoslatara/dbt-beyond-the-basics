@@ -320,22 +320,22 @@ files = [
 
 [[package]]
 name = "dataproperty"
-version = "1.0.1"
+version = "1.1.0"
 description = "Python library for extract property from data."
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.9"
 files = [
-    {file = "DataProperty-1.0.1-py3-none-any.whl", hash = "sha256:0b8b07d4fb6453fcf975b53d35dea41f3cfd69c9d79b5010c3cf224ff0407a7a"},
-    {file = "DataProperty-1.0.1.tar.gz", hash = "sha256:723e5729fa6e885e127a771a983ee1e0e34bb141aca4ffe1f0bfa7cde34650a4"},
+    {file = "DataProperty-1.1.0-py3-none-any.whl", hash = "sha256:c61fcb2e2deca35e6d1eb1f251a7f22f0dcde63e80e61f0cc18c19f42abfd25b"},
+    {file = "dataproperty-1.1.0.tar.gz", hash = "sha256:b038437a4097d1a1c497695c3586ea34bea67fdd35372b9a50f30bf044d77d04"},
 ]
 
 [package.dependencies]
 mbstrdecoder = ">=1.0.0,<2"
-typepy = {version = ">=1.2.0,<2", extras = ["datetime"]}
+typepy = {version = ">=1.3.2,<2", extras = ["datetime"]}
 
 [package.extras]
 logging = ["loguru (>=0.4.1,<1)"]
-test = ["pytest (>=6.0.1)", "pytest-md-report (>=0.3)", "tcolorpy (>=0.1.2)"]
+test = ["pytest (>=6.0.1)", "pytest-md-report (>=0.6.2)", "tcolorpy (>=0.1.2)"]
 
 [[package]]
 name = "db-dtypes"
@@ -2196,17 +2196,17 @@ windows-terminal = ["colorama (>=0.4.6)"]
 
 [[package]]
 name = "pytablewriter"
-version = "1.2.0"
+version = "1.2.1"
 description = "pytablewriter is a Python library to write a table in various formats: AsciiDoc / CSV / Elasticsearch / HTML / JavaScript / JSON / LaTeX / LDJSON / LTSV / Markdown / MediaWiki / NumPy / Excel / Pandas / Python / reStructuredText / SQLite / TOML / TSV / YAML."
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.9"
 files = [
-    {file = "pytablewriter-1.2.0-py3-none-any.whl", hash = "sha256:4a30e2bb4bf5bc1069b1d2b2bc41947577c4517ab0875b23a5b194d296f543d8"},
-    {file = "pytablewriter-1.2.0.tar.gz", hash = "sha256:0204a4bb684a22140d640f2599f09e137bcdc18b3dd49426f4a555016e246b46"},
+    {file = "pytablewriter-1.2.1-py3-none-any.whl", hash = "sha256:e906ff7ff5151d70a5f66e0f7b75642a7f2dce8d893c265b79cc9cf6bc04ddb4"},
+    {file = "pytablewriter-1.2.1.tar.gz", hash = "sha256:7bd0f4f397e070e3b8a34edcf1b9257ccbb18305493d8350a5dbc9957fced959"},
 ]
 
 [package.dependencies]
-DataProperty = ">=1.0.1,<2"
+DataProperty = ">=1.1.0,<2"
 mbstrdecoder = ">=1.0.0,<2"
 pathvalidate = ">=2.3.0,<4"
 setuptools = ">=38.3.0"
@@ -2216,7 +2216,7 @@ typepy = {version = ">=1.3.2,<2", extras = ["datetime"]}
 
 [package.extras]
 all = ["PyYAML (>=3.11,<7)", "SimpleSQLite (>=1.3.2,<2)", "XlsxWriter (>=0.9.6,<4)", "dominate (>=2.1.5,<3)", "elasticsearch (>=8.0.1,<9)", "loguru (>=0.4.1,<1)", "pandas (>=0.25.3,<3)", "pytablereader (>=0.31.3,<2)", "pytablewriter-altcol-theme (>=0.1.0,<1)", "pytablewriter-altrow-theme (>=0.2.0,<1)", "simplejson (>=3.8.1,<4)", "toml (>=0.9.3,<1)", "xlwt"]
-docs = ["PyYAML (>=3.11,<7)", "SimpleSQLite (>=1.3.2,<2)", "Sphinx (>=2.4)", "XlsxWriter (>=0.9.6,<4)", "dominate (>=2.1.5,<3)", "elasticsearch (>=8.0.1,<9)", "loguru (>=0.4.1,<1)", "pandas (>=0.25.3,<3)", "pytablereader (>=0.31.3,<2)", "pytablewriter-altcol-theme (>=0.1.0,<1)", "pytablewriter-altrow-theme (>=0.2.0,<1)", "simplejson (>=3.8.1,<4)", "sphinx-rtd-theme (>=1.2.2)", "toml (>=0.9.3,<1)", "xlwt"]
+docs = ["PyYAML (>=3.11,<7)", "SimpleSQLite (>=1.3.2,<2)", "Sphinx (>=2.4)", "XlsxWriter (>=0.9.6,<4)", "dominate (>=2.1.5,<3)", "elasticsearch (>=8.0.1,<9)", "loguru (>=0.4.1,<1)", "pandas (>=0.25.3,<3)", "pytablereader (>=0.31.3,<2)", "pytablewriter-altcol-theme (>=0.1.0,<1)", "pytablewriter-altrow-theme (>=0.2.0,<1)", "simplejson (>=3.8.1,<4)", "sphinx_rtd_theme (>=1.2.2)", "toml (>=0.9.3,<1)", "xlwt"]
 es = ["elasticsearch (>=8.0.1,<9)"]
 es8 = ["elasticsearch (>=8.0.1,<9)"]
 excel = ["XlsxWriter (>=0.9.6,<4)", "xlwt"]
@@ -2225,7 +2225,7 @@ html = ["dominate (>=2.1.5,<3)"]
 logging = ["loguru (>=0.4.1,<1)"]
 pandas = ["pandas (>=0.25.3,<3)"]
 sqlite = ["SimpleSQLite (>=1.3.2,<2)"]
-test = ["PyYAML (>=3.11,<7)", "SimpleSQLite (>=1.3.2,<2)", "XlsxWriter (>=0.9.6,<4)", "beautifulsoup4 (>=4.10)", "dominate (>=2.1.5,<3)", "elasticsearch (>=8.0.1,<9)", "loguru (>=0.4.1,<1)", "pandas (>=0.25.3,<3)", "pytablereader (>=0.31.3,<2)", "pytablereader[excel,sqlite] (>=0.31.3)", "pytablewriter-altcol-theme (>=0.1.0,<1)", "pytablewriter-altrow-theme (>=0.2.0,<1)", "pytest (>=6.0.1)", "pytest-md-report (>=0.4.1)", "simplejson (>=3.8.1,<4)", "sqliteschema (>=1.3.0)", "tablib (>=3.2.0)", "toml (>=0.9.3,<1)", "xlwt"]
+test = ["PyYAML (>=3.11,<7)", "SimpleSQLite (>=1.3.2,<2)", "XlsxWriter (>=0.9.6,<4)", "beautifulsoup4 (>=4.10)", "dominate (>=2.1.5,<3)", "elasticsearch (>=8.0.1,<9)", "loguru (>=0.4.1,<1)", "pandas (>=0.25.3,<3)", "pytablereader (>=0.31.3,<2)", "pytablereader[excel,sqlite] (>=0.31.3)", "pytablewriter-altcol-theme (>=0.1.0,<1)", "pytablewriter-altrow-theme (>=0.2.0,<1)", "pytest (>=6.0.1)", "pytest-md-report (>=0.6.2)", "simplejson (>=3.8.1,<4)", "sqliteschema (>=2)", "tablib (>=3.2.0)", "toml (>=0.9.3,<1)", "xlwt"]
 theme = ["pytablewriter-altcol-theme (>=0.1.0,<1)", "pytablewriter-altrow-theme (>=0.2.0,<1)"]
 toml = ["toml (>=0.9.3,<1)"]
 yaml = ["PyYAML (>=3.11,<7)"]
