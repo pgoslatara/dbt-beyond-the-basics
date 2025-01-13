@@ -13,7 +13,7 @@ RUN apt update && \
     apt-get install apt-transport-https ca-certificates gnupg curl -y && \
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - && \
     apt-get update && apt-get install google-cloud-sdk -y && \
-    curl -sSL https://install.python-poetry.org | python3 - --version 1.8.3 && \
+    curl -sSL https://install.python-poetry.org | python3 - --version 2.0.1 && \
     rm -rf /var/lib/apt/lists/*
 
 # Install zsh

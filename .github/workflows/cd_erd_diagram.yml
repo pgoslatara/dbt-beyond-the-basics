@@ -1,4 +1,4 @@
-name: Publish dbt docs
+name: Publish ERD diagram
 
 on:
   push:
@@ -12,9 +12,11 @@ env:
     POETRY_VERSION: "2.0.1"
 
 jobs:
-  publish-dbt-docs:
-    name: Publish dbt Docs as GitHub Page
-    runs-on: ubuntu-latest
+  publish-erd-diagram:
+    name: Publish ERD diagram
+    permissions:
+      contents: write
+    runs-on: ubuntu-22.04
     steps:
         - uses: actions/checkout@v4
 
@@ -66,8 +68,15 @@ jobs:
             poetry run dbt deps --target prd
             poetry run dbt docs generate --target prd
 
-        - name: Deploy to GitHub Pages
-          uses: peaceiris/actions-gh-pages@v4
-          with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            publish_dir: ./target
+        - name: Generate ERD diagram
+          run: poetry run python ./scripts/generate_marts_erd_diagram.py
+
+        - name: Commit and push ERD
+          run: |
+            git config user.name "github-actions"
+            git config user.email "actions@github.com"
+            git fetch
+            git checkout erd-diagram
+            git add -f ./target/mermaid.png
+            git commit -m "Adding ERD diagram" --allow-empty
+            git push -f origin erd-diagram

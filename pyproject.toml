@@ -1,3 +1,25 @@
+[project]
+authors = [{name="Padraic Slattery",email="pgoslatara@gmail.com"}]
+dependencies=[
+  "dbt-core (>=1.9.0,<1.10.0)",
+  "dbt-bigquery (>=1.9.0,<1.10.0)"
+]
+description = "Showcase of advanced use cases relating to CI in dbt"
+keywords = [
+  "python",
+  "sql",
+  "Continuous Integration",
+  "dbt",
+]
+license ="MIT"
+maintainers = [{name="Padraic Slattery",email="pgoslatara@gmail.com"}]
+name = "dbt-beyond-the-basics"
+package-mode = false
+readme = "README.md"
+repository = "https://github.com/pgoslatara/dbt-beyond-the-basics"
+requires-python = ">=3.11,<3.12"
+version = "0.0.0"
+
 [tool.black]
 line-length = 99
 include = '/project$|\.pyi?$'
@@ -24,38 +46,22 @@ profile = "black"
 exclude=["target/**/*", "dbt_packages/**/*"]
 
 [tool.poetry]
-authors = ["Padraic Slattery <pgoslatara@gmail.com>"]
-description = "Showcase of advanced use cases relating to CI in dbt"
-keywords = [
-  "python",
-  "sql",
-  "Continuous Integration",
-  "dbt",
-]
-license ="MIT"
-maintainers = ["Padraic Slattery <pgoslatara@gmail.com>"]
-name = "dbt-beyond-the-basics"
 package-mode = false
-readme = "README.md"
-repository = "https://github.com/pgoslatara/dbt-beyond-the-basics"
-version = "0.0.0"
-
-[tool.poetry.dependencies]
-python = ">=3.11,<3.12"
-dbt-core=">=1.9.0,<1.10.0"
-dbt-bigquery=">=1.9.0,<1.10.0"
 
 [tool.poetry.group.dev.dependencies]
 autoflake = "*"
 black = "*"
-dbt-bouncer = "*"
+dbt-artifacts-parser = ">=0.8"
+dbt-bouncer = ">=1.6.4"
 dbt-coverage = "*"
+dbterd = "*"
 duckdb = "*"
 flake8 = "*"
 GitPython = "*"
 google-cloud-bigquery = "*"
 google-cloud-storage = "*"
 isort = "*"
+mermaid-py = "*"
 pre-commit = "*"
 pyarrow = "*"
 pytablewriter = "*"

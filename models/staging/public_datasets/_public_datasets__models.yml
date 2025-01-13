@@ -57,3 +57,6 @@ models:
         description: Number of transactions included in this block
         tests:
         - not_null
+    tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 1

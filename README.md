@@ -18,6 +18,8 @@ A repository demonstrating advanced use cases of dbt in the following areas:
 - [Continuous Deployment (CD)](#continuous-deployment)
 
     - [dbt Docs](#dbt-docs)
+    - [Entity Relationship Diagram (ERD)](#entity-relationship-diagram-erd)
+    - [Docker-ising dbt](#docker-ising-dbt)
 
 - [Dev Containers](#dev-containers)
 
@@ -28,6 +30,9 @@ A repository demonstrating advanced use cases of dbt in the following areas:
     - [Caching in GitHub Workflows](#caching-in-github-workflows)
 
 - [Others](#others)
+
+    - [Running dbt from python](#running-dbt-from-python)
+    - [Conferences](#conferences)
 
 See something incorrect, open an [issue](https://github.com/pgoslatara/dbt-beyond-the-basics/issues/new)!
 
@@ -315,6 +320,54 @@ Every time we push to our `prd` branch, the [cd_dbt_docs.yml](https://github.com
 
 GitHub Pages is awesome as it is free for personal, public repositories (like this repository) and also for organisations with an Enterprise plan. If your organisation has GitHub Pages, these are placed behind the same SSO as your GitHub repositories, providing a safe way of exposing dbt Docs to members of your organisation. If you do not use GitHub, there are many alternatives available such as Cloudflare and Netlify, in addition AWS, Azure and GCP can all serve static websites from their cloud storage products.
 
+## Entity Relationship Diagram (ERD)
+
+An entity relationship diagram (ERD) is a visual representation of the relationships between entities in a database. It is a useful tool for understanding the structure of a database and can be used by dbt developers when adding new features and also by analysts when writing queries to answer business questions. For a dbt project, only the `marts` layer is exposed to end users, hence the ERD only needs to include this layer. Here is the ERD for this dbt project (it's rather basic, a real-world dbt project would have a significantly busier ERD):
+
+![](https://github.com/pgoslatara/dbt-beyond-the-basics/blob/erd-diagram/target/mermaid.png?raw=true)
+
+How is this created?
+
+1. In our `marts` layer we have defined `relationships` tests. For example, the `customer_id` column in `dim_customers` is related to the `customer_id` column in `dim_orders`.
+
+1. Using [dbterd](https://github.com/datnguye/dbterd) we can generate a [mermaid](https://github.blog/developer-skills/github/include-diagrams-markdown-files-mermaid/) diagram of the `marts` layer including the `relationships`.
+
+1. Using [mermaid-py](https://github.com/ouhammmourachid/mermaid-py) we can convert the mermaid diagram to a png image.
+
+1. Combining the last two steps into a single python script: [./scripts/generate_marts_erd_diagram.py](./scripts/generate_marts_erd_diagram.py).
+
+1. Now the tricky part. I want this diagram in the `README` of my repository. But I don't want every developer to have to run this script before creating their PR, I want the image to be automatically generated and kept up to date. So I do the following:
+
+    1. Using the [cd_erd_diagram.yml](./.github/workflows/cd_erd_diagram.yml) workflow I trigger a GitHub workflow after every merge to `prd`.
+
+    1. This workflow runs the script and generates the ERD image.
+
+    1. The image is then force-pushed to the `erd-diagram` branch. Why? The `prd` branch has branch protection rules that prevent force pushes (this is good practice), so pushing to a different branch avoids this.
+
+    1. I now have an automatically updated ERD available at a static URL:
+
+        ```shell
+        https://github.com/pgoslatara/dbt-beyond-the-basics/blob/erd-diagram/target/mermaid.png?raw=true
+        ```
+
+        This is the URL I reference for the above image.
+
+## Docker-ising dbt
+
+"Docker-ising" refers to building a Docker image that can run your dbt project. This is useful when your orchestration process involves running a command in a pre-built container, think Airflow, Cloud Build, Dagster or any other modern Cloud orchestration tool. When building a Docker image for dbt we want to follow several guidelines:
+
+* The image should be as small as is reasonable achievable. Given that our orchestrator may pull the image many times over the course of a single day (e.g. hourly runs or one pull per task), having a smaller image reduces the amount of data that needs to moved (and resulting wait times and cloud costs). There are several ways to achieve this:
+    * As the base image, use a "slim" python image rather than a "full" image.
+    * If you use a python package manager like Poetry, use [multi-stage builds](https://docs.docker.com/build/building/multi-stage/). This allows your image to be built using Poetry but does not include Poetry in the final image (as it is not necessary to run dbt).
+    * Only install the python dependencies you need, i.e. no dev dependencies.
+* The image should not contain any sensitive data like passwords or credentials. If these are required, they should be passed at build time as [build secrets](https://docs.docker.com/build/building/secrets/).
+* The image should make good use of Docker layers and caching to reduce the time it takes to build the image. The [docker/build-push-action](https://github.com/docker/build-push-action) natively supports caching Docker layers in GitHub Actions.
+* The image should not require any setup commands to be used. For dbt this means that the image already contains all required dbt packages and the dbt project has been parsed.
+
+In CI, the [ci_pipeline.yml](./.github/workflows/ci_pipeline.yml) workflow builds a Docker image and runs a `dbt parse` command on it to validate that the image can run dbt commands.
+
+In CD, although not implemented in this repository, the `docker/build-push-action` GitHub Action can be used to push the image to an image registry such as GCP's Artifact Registry or AWS's ECR. From here the image can be downloaded by your orchestration tool. It is common to tag images with the SHA of the commit that built the image, in addition you can tag images with the environment they are intended to be used in. For example, an image will initially have the commit SHA and `stg` tag, it will then be used in our staging environment, after a deployment the `stg` tag will be replaced with a `prd` tag and the image will be used in production. When a subsequent deployment to production is performed the `prd` tag is re-assigned to a newer image and the original image retains only its SHA tag. At all times there is one image with a `stg` tag and one image with a `prd` tag. Immediately after a deployment from staging to production, one image will have both tags (i.e. staging and production will use the same image).
+
 # Dev Containers
 
 [Dev containers](https://containers.dev/) provide a Docker-ised development environment and are natively supported by both PyCharm and VSCode, allowing developers to continue using their preferred IDE. Using a dev container allows all developers to work in a standardised environment (including VSCode extensions!), minimising setup issues, reducing the need for manual configuration and allowing for a consistent development experience. Dev containers are useful in workplaces where developers use different OS's (think Mac and Windows), where developers may not be familiar with setting up python environments and where connecting to the underlying database requires non-standard configuration (SQL Server sometimes requires specific drivers to be installed). You can even use the [devcontainers/ci](https://github.com/devcontainers/ci) Github Action to use your standardised dev container in your GitHub workflows.
@@ -349,7 +402,7 @@ Python has a large ecosystem of tools, many of these will use the `.python-versi
 
 ## Package Managers
 
-This repository uses [Poetry](https://python-poetry.org/) as a python package manager. Package managers are used to install and manage python packages, one of their primary benefits is the generation of a lock file, a file detailing the exact version of every installed package. For Poetry, this is the `poetry.lock` file. This helps control what are known as transitive dependencies, dependencies that are installed as a result of installing a package. For example, if I was using `pip` to install packages I may specify `dbt-core>=1.8,<1.9`. With Poetry I would specify `dbt-core=">=1.8.0,<1.9.0"`. The installed version of `dbt-core` will be the same using both methods. However `dbt-core` has dependencies (such as `click`, `logbook`, etc.). With `pip` I have no control over the version of these dependencies, with Poetry I do as the lock file ensures even these dependencies are recorded.
+This repository uses [Poetry](https://python-poetry.org/) as a python package manager. Package managers are used to install and manage python packages, one of their primary benefits is the generation of a lock file, a file detailing the exact version of every installed package. For Poetry, this is the `poetry.lock` file. This helps control what are known as transitive dependencies, dependencies that are installed as a result of installing a package. For example, if I was using `pip` to install packages I may specify `dbt-core>=1.8,<1.9`. With Poetry I would specify `dbt-core ()>=1.8.0,<1.9.0)`. The installed version of `dbt-core` will be the same using both methods. However `dbt-core` has dependencies (such as `click`, `logbook`, etc.). With `pip` I have no control over the version of these dependencies, with Poetry I do as the lock file ensures even these dependencies are recorded.
 
 Note that there are several other python package managers available such as `hatch`, `pdm` and `uv`.
 
@@ -371,7 +424,7 @@ To enable caching, let's take an example workflow snippet:
 ```yaml
 
 env:
-  POETRY_VERSION: "1.8.3"
+  POETRY_VERSION: "2.0.1"
 
 jobs:
   auto-update:
