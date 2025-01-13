@@ -11,7 +11,7 @@ env:
   DBT_PROFILES_DIR: "."
   GITHUB_RUN_NUMBER: ${{ github.run_number }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  POETRY_VERSION: "1.8.3"
+  POETRY_VERSION: "2.0.1"
 
 jobs:
   cd_pipeline:

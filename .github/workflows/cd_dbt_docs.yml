@@ -9,7 +9,7 @@ on:
 env:
     DBT_DATASET: "prd"
     DBT_PROFILES_DIR: "."
-    POETRY_VERSION: "1.8.3"
+    POETRY_VERSION: "2.0.1"
 
 jobs:
   publish-dbt-docs:

@@ -25,7 +25,7 @@ FROM base AS builder
 # Install OS dependencies
 RUN apt-get update && \
     apt-get install -qq -y curl --fix-missing --no-install-recommends && \
-    curl -sSL https://install.python-poetry.org | python3 - --version 1.8.3 && \
+    curl -sSL https://install.python-poetry.org | python3 - --version 2.0.1 && \
     rm -rf /var/lib/apt/lists/*
 ENV PATH="$PATH:$POETRY_HOME/bin"
 

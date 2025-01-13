@@ -402,7 +402,7 @@ Python has a large ecosystem of tools, many of these will use the `.python-versi
 
 ## Package Managers
 
-This repository uses [Poetry](https://python-poetry.org/) as a python package manager. Package managers are used to install and manage python packages, one of their primary benefits is the generation of a lock file, a file detailing the exact version of every installed package. For Poetry, this is the `poetry.lock` file. This helps control what are known as transitive dependencies, dependencies that are installed as a result of installing a package. For example, if I was using `pip` to install packages I may specify `dbt-core>=1.8,<1.9`. With Poetry I would specify `dbt-core=">=1.8.0,<1.9.0"`. The installed version of `dbt-core` will be the same using both methods. However `dbt-core` has dependencies (such as `click`, `logbook`, etc.). With `pip` I have no control over the version of these dependencies, with Poetry I do as the lock file ensures even these dependencies are recorded.
+This repository uses [Poetry](https://python-poetry.org/) as a python package manager. Package managers are used to install and manage python packages, one of their primary benefits is the generation of a lock file, a file detailing the exact version of every installed package. For Poetry, this is the `poetry.lock` file. This helps control what are known as transitive dependencies, dependencies that are installed as a result of installing a package. For example, if I was using `pip` to install packages I may specify `dbt-core>=1.8,<1.9`. With Poetry I would specify `dbt-core ()>=1.8.0,<1.9.0)`. The installed version of `dbt-core` will be the same using both methods. However `dbt-core` has dependencies (such as `click`, `logbook`, etc.). With `pip` I have no control over the version of these dependencies, with Poetry I do as the lock file ensures even these dependencies are recorded.
 
 Note that there are several other python package managers available such as `hatch`, `pdm` and `uv`.
 
@@ -424,7 +424,7 @@ To enable caching, let's take an example workflow snippet:
 ```yaml
 
 env:
-  POETRY_VERSION: "1.8.3"
+  POETRY_VERSION: "2.0.1"
 
 jobs:
   auto-update:
