@@ -412,14 +412,14 @@ test = ["pytest (>=6.2.4,<9.0.0)"]
 
 [[package]]
 name = "dbt-bigquery"
-version = "1.9.0"
+version = "1.9.1"
 description = "The Bigquery adapter plugin for dbt"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "dbt_bigquery-1.9.0-py3-none-any.whl", hash = "sha256:01e393b43f1b53360080682fea89217cb2f0fee81f1de603afb42b9e0d37de90"},
-    {file = "dbt_bigquery-1.9.0.tar.gz", hash = "sha256:0468057e91dd75a75c41d3b468685cb2cd9340b2e9770805cda65613f95bfe01"},
+    {file = "dbt_bigquery-1.9.1-py3-none-any.whl", hash = "sha256:e2f55050e0b212403701cc21aa2de1829aa724dfbca788db02061acf9be0603f"},
+    {file = "dbt_bigquery-1.9.1.tar.gz", hash = "sha256:da1c7f1fa7e0a06265881d990e385f5867369529bbebf4b36500db0b3bcd495b"},
 ]
 
 [package.dependencies]
