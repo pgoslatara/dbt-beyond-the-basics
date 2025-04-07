@@ -52,7 +52,7 @@ package-mode = false
 autoflake = "*"
 black = "*"
 dbt-artifacts-parser = ">=0.8"
-dbt-bouncer = ">=1.6.4"
+dbt-bouncer = ">=1.11.0"
 dbt-coverage = "*"
 dbterd = "*"
 duckdb = "*"
