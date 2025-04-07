@@ -685,14 +685,14 @@ google-cloud-storage = ">=2.4,<3.0"
 
 [[package]]
 name = "dbt-bouncer"
-version = "1.10.1"
+version = "1.11.0"
 description = "Configure and enforce conventions for your dbt project."
 optional = false
 python-versions = "<3.14,>=3.9.2"
 groups = ["dev"]
 files = [
-    {file = "dbt_bouncer-1.10.1-py3-none-any.whl", hash = "sha256:2904a7bc6c473863a68ad4631d59bcd498b9afa612a1974b65b452d5c7a2c831"},
-    {file = "dbt_bouncer-1.10.1.tar.gz", hash = "sha256:380988b30236d6e468b9ebc757536f1e8d25a82285faa65560cbbe17914c0243"},
+    {file = "dbt_bouncer-1.11.0-py3-none-any.whl", hash = "sha256:82f83e15bd31a5241a14130a1b80b3a1291ec88a08ada8b6b46f0758b7aefcb5"},
+    {file = "dbt_bouncer-1.11.0.tar.gz", hash = "sha256:fc7330cc521d09331bbc5543e4548cb8314e17aa15f035aeaa017e491d809a48"},
 ]
 
 [package.dependencies]
