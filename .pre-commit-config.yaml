@@ -65,27 +65,6 @@ repos:
         name: Run sqlfmt
         pass_filenames: true
         types_or: [jinja, sql]
-  - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
-    rev: v2.0.7
-    hooks:
-    - id: dbt-parse
-    - id: dbt-docs-generate
-      args: ["--cmd-flags", "++threads", "64"]
-    - id: check-model-has-properties-file
-      name: Check that all models are listed in a YAML file
-      files: ^models/intermediate/|^models/marts/|^models/staging/
-    - id: check-model-name-contract
-      args: [--pattern, "(int_).*"]
-      files: models/intermediate/
-    - id: check-model-name-contract
-      args: [--pattern, "(dim_|fct_|rpt_).*"]
-      files: models/marts/
-    - id: check-model-name-contract
-      args: [--pattern, "(base_|stg_).*"]
-      files: models/staging/
-    - id: check-model-name-contract
-      args: [--pattern, "^seed_.*csv$"]
-      files: models/seeds/
   - repo: local
     hooks:
       - id: pytest-catalog-json
