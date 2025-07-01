@@ -1,7 +1,7 @@
 [project]
 authors = [{name="Padraic Slattery",email="pgoslatara@gmail.com"}]
 dependencies=[
-  "dbt-core (>=1.9.0,<1.10.0)",
+  "dbt-core (>=1.10.0,<1.11.0)",
   "dbt-bigquery (>=1.9.0,<1.10.0)"
 ]
 description = "Showcase of advanced use cases relating to CI in dbt"
