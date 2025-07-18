@@ -5,6 +5,7 @@ on:
     branches:
       - stg
       - prd
+  workflow_dispatch:
 
 env:
   DBT_CICD_RUN: "true"
