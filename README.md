@@ -72,22 +72,6 @@ Continuous Integration (CI) is the process of codifying standards, these range f
         - id: sqlfmt
     ```
 
-- [dbt-checkpoint](https://github.com/dbt-checkpoint/dbt-checkpoint) is an awesome pre-commit package with multiple well-documented hooks. Some valuable options include ensuring that every model has a description in a YAML file, naming conventions for models in certain folders and that models have a minimum number of tests.
-
-    ```yaml
-    # .pre-commit-config.yaml
-    - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
-        rev: v1.1.0
-        hooks:
-        - id: dbt-compile
-        - id: dbt-docs-generate
-        - id: check-model-has-properties-file
-            name: Check that all models are listed in a YAML file
-        - id: check-model-name-contract
-            args: [--pattern, "(base_|stg_).*"]
-            files: models/staging/
-    ```
-
 ### The advantage of local hooks
 
 Most pre-commit hooks are "isolated" hooks in the sense that pre-commit creates a dedicated, isolated environment for each hook to run in. In effect this means that the python environment the hook runs in is not the same as the python environment you are working in locally.
@@ -194,7 +178,7 @@ They can also be run as a pre-commit hook:
 
 ## Coverage reports
 
-Some of the functionality discussed above in [dbt Artifacts and Pytest](#dbt-artifacts-and-pytest) can be automated using [dbt-coverage](https://github.com/slidoapp/dbt-coverage). This is a python package that prduces coverage reports for both documentation and, separately, for tests. All pull requests in this repo will have a comment that provides these stats. This allows PR reviewers to quickly assess if any newly added models are lacking acceptable documentation or test coverage.
+Some of the functionality discussed above in [dbt Artifacts and Pytest](#dbt-artifacts-and-pytest) can be automated using [dbt-coverage](https://github.com/slidoapp/dbt-coverage). This is a python package that produces coverage reports for both documentation and, separately, for tests. All pull requests in this repo will have a comment that provides these stats. This allows PR reviewers to quickly assess if any newly added models are lacking acceptable documentation or test coverage.
 
 ## dbt-bouncer
 

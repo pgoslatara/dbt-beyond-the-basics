@@ -5,6 +5,7 @@ on:
     branches:
       - stg
       - prd
+  workflow_dispatch:
 
 env:
   DBT_CICD_RUN: "true"
@@ -76,8 +77,11 @@ jobs:
       - name: dbt dep
         run: poetry run dbt deps
 
-      - name: dbt compile
-        run: poetry run dbt compile --target $DESTINATION_BRANCH
+      - name: dbt parse
+        run: poetry run dbt parse --target $DESTINATION_BRANCH
+
+      - name: dbt-bouncer (manifest checks)
+        run: poetry run dbt-bouncer --only manifest_checks
 
       - run: poetry run pytest ./tests/pytest -m no_deps -n 5
 
@@ -93,6 +97,9 @@ jobs:
       - name: dbt run --empty
         run : poetry run dbt run --empty --target $DESTINATION_BRANCH
 
+      - name: dbt-bouncer (run_results checks)
+        run: poetry run dbt-bouncer --only run_results_checks
+
       - name: Run unit tests
         run: poetry run dbt test --select "test_type:unit" --target $DESTINATION_BRANCH
 
@@ -103,8 +110,8 @@ jobs:
       - name: dbt docs generate
         run: poetry run dbt docs generate --target $DESTINATION_BRANCH
 
-      - name: Run `dbt-bouncer`
-        run: poetry run dbt-bouncer
+      - name: dbt-bouncer (catalog checks)
+        run: poetry run dbt-bouncer --only catalog_checks
 
       - name: pre-commit run -a
         run: SKIP=autoflake,dbt-compile,dbt-docs-generate poetry run pre-commit run -a
