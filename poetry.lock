@@ -678,14 +678,14 @@ nbformat = ">=5.10.4"
 
 [[package]]
 name = "dbt-bouncer"
-version = "1.17.0"
+version = "1.20.0"
 description = "Configure and enforce conventions for your dbt project."
 optional = false
 python-versions = "<3.14,>=3.9.2"
 groups = ["dev"]
 files = [
-    {file = "dbt_bouncer-1.17.0-py3-none-any.whl", hash = "sha256:bf4b51e92bbfa551f65369b2c6e85950d1a9b562f8b3681b61664920bbc50794"},
-    {file = "dbt_bouncer-1.17.0.tar.gz", hash = "sha256:2f4707a635719033d2b6363d33297d71218186ca5a61b4fa801a760821d896aa"},
+    {file = "dbt_bouncer-1.20.0-py3-none-any.whl", hash = "sha256:4678176f1f2f5a2bfc8528708d1f6188221b89685c32743fb56c6decf4cccf8c"},
+    {file = "dbt_bouncer-1.20.0.tar.gz", hash = "sha256:0214ff6e1367b5e877306ca11e9f6e2347e0a80ad19b700b086b9bf8e4314f93"},
 ]
 
 [package.dependencies]
