@@ -44,7 +44,21 @@ Continuous Integration (CI) is the process of codifying standards, these range f
 
 ## Pre-commit
 
-[Pre-commit](https://pre-commit.com/) provides a standardised process to run CI before committing to your local branch. This has several benefits, primarily providing the developer with a quick feedback loop on their work as well as ensuring changes that do not align with standards are automatically identified before being merged. Pre-commit operates via hooks, all of these hooks are sepecified in a `.pre-commit-config.yaml`file. There are several hooks that are relevant to a dbt project:
+[Pre-commit](https://pre-commit.com/) provides a standardised process to run some basic tests (generally formatting and linting) before committing to your local branch. This has several benefits, primarily providing the developer with a quick feedback loop on their work as well as ensuring changes that do not align with standards are automatically identified before being merged. Pre-commit operates via hooks, all of these hooks are sepecified in a `.pre-commit-config.yaml`file.
+
+To install `pre-commit` run:
+
+```shell
+pip install pre-commit
+```
+
+Then install the hooks specified in your `.pre-commit-config.yaml` file:
+
+```shell
+pre-commit install
+```
+
+There are several hooks that are relevant to a dbt project:
 
 - [Pre-commit](https://github.com/pre-commit/pre-commit-hooks) itself provides several standard hooks that ensure standard behaviour regarding whitespace control, valid YAML files, no presence of private keys and no unresolved merge conflicts. An interesting hook is `no-commit-to-branch`, this allows the name of the git branch to be standarised, for example to always start with `feature/` or to always include a Jira ticket ID to help with tracking of work items.
 
@@ -71,6 +85,8 @@ Continuous Integration (CI) is the process of codifying standards, these range f
         hooks:
         - id: sqlfmt
     ```
+
+For an example `.pre-commit-config.yaml` file, see the [file](https://github.com/pgoslatara/dbt-beyond-the-basics/blob/stg/.pre-commit-config.yaml) in this repository.
 
 ### The advantage of local hooks
 
