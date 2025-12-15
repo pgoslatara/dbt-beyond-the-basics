@@ -854,19 +854,19 @@ typing-extensions = ">=4.4,<5"
 
 [[package]]
 name = "dbterd"
-version = "1.20.0"
+version = "1.23.0"
 description = "Generate the ERD-as-a-code from dbt artifacts"
 optional = false
 python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "dbterd-1.20.0-py3-none-any.whl", hash = "sha256:83481f7f860ea1edfe4e1886389706dec315167f10e38b8533f9a40c2f92c508"},
-    {file = "dbterd-1.20.0.tar.gz", hash = "sha256:7c6642cdd205c0a3e8347a7fe3703c97af4798ccd364438f395e6196b0977d27"},
+    {file = "dbterd-1.23.0-py3-none-any.whl", hash = "sha256:e8bf42626e59066801559d309db808af2db745751407a64bbb4aa95df14af42b"},
+    {file = "dbterd-1.23.0.tar.gz", hash = "sha256:5e883d67c4a40f9ebb5aa368c2547fd381e5cd7447e47d5e418f64d2027831d2"},
 ]
 
 [package.dependencies]
 click = ">=8.1.7"
-dbt-artifacts-parser = ">=0.7.0"
+dbt-artifacts-parser = ">=0.10.0"
 requests = ">=2.32.3"
 
 [package.extras]
