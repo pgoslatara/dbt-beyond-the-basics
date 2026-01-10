@@ -101,7 +101,7 @@ jobs:
       - name: Generate docs coverage report
         id: dbt-docs-coverage-report
         run: |
-          uv run dbt-coverage compute doc --cov-report coverage-doc.json --cov-format markdown >> coverage-doc.md
+          uv run dbt-coverage compute doc --cov-report coverage-doc.json --output-format markdown >> coverage-doc.md
           sed -i '/# Coverage report/c\# Doc coverage report.' coverage-doc.md
 
       - uses: mshick/add-pr-comment@v2
