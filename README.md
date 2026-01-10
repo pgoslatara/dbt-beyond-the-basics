@@ -358,7 +358,7 @@ How is this created?
 
 * The image should be as small as is reasonable achievable. Given that our orchestrator may pull the image many times over the course of a single day (e.g. hourly runs or one pull per task), having a smaller image reduces the amount of data that needs to moved (and resulting wait times and cloud costs). There are several ways to achieve this:
     * As the base image, use a "slim" python image rather than a "full" image.
-    * If you use a python package manager like Poetry, use [multi-stage builds](https://docs.docker.com/build/building/multi-stage/). This allows your image to be built using Poetry but does not include Poetry in the final image (as it is not necessary to run dbt).
+    * If you use a python package manager like uv, use [multi-stage builds](https://docs.docker.com/build/building/multi-stage/). This allows your image to be built using uv but does not include uv in the final image (as it is not necessary to run dbt).
     * Only install the python dependencies you need, i.e. no dev dependencies.
 * The image should not contain any sensitive data like passwords or credentials. If these are required, they should be passed at build time as [build secrets](https://docs.docker.com/build/building/secrets/).
 * The image should make good use of Docker layers and caching to reduce the time it takes to build the image. The [docker/build-push-action](https://github.com/docker/build-push-action) natively supports caching Docker layers in GitHub Actions.
@@ -402,9 +402,7 @@ Python has a large ecosystem of tools, many of these will use the `.python-versi
 
 ## Package Managers
 
-This repository uses [Poetry](https://python-poetry.org/) as a python package manager. Package managers are used to install and manage python packages, one of their primary benefits is the generation of a lock file, a file detailing the exact version of every installed package. For Poetry, this is the `poetry.lock` file. This helps control what are known as transitive dependencies, dependencies that are installed as a result of installing a package. For example, if I was using `pip` to install packages I may specify `dbt-core>=1.8,<1.9`. With Poetry I would specify `dbt-core ()>=1.8.0,<1.9.0)`. The installed version of `dbt-core` will be the same using both methods. However `dbt-core` has dependencies (such as `click`, `logbook`, etc.). With `pip` I have no control over the version of these dependencies, with Poetry I do as the lock file ensures even these dependencies are recorded.
-
-Note that there are several other python package managers available such as `hatch`, `pdm` and `uv`.
+This repository uses [uv](https://docs.astral.sh/uv/) as a python package manager. Package managers are used to install and manage python packages, one of their primary benefits is the generation of a lock file, a file detailing the exact version of every installed package. For uv, this is the `uv.lock` file. This helps control what are known as transitive dependencies, dependencies that are installed as a result of installing a package. For example, if I was using `pip` to install packages I may specify `dbt-core>=1.8,<1.9`. With uv I would specify `dbt-core (>=1.8.0,<1.9.0)`. The installed version of `dbt-core` will be the same using both methods. However `dbt-core` has dependencies (such as `click`, `logbook`, etc.). With `pip` I have no control over the version of these dependencies, with uv I do as the lock file ensures even these dependencies are recorded.
 
 ## Caching in GitHub Workflows
 
@@ -412,19 +410,15 @@ GitHub workflows initialise in an almost empty environment, just your repository
 
 One way to avoid this is to use caching, the concept of storing the output of your work and reusing it in a later run. GitHub Actions has a built in caching mechanism, you can specify a cache key and a path to cache. You can even view the existing caches for this repo [here](https://github.com/pgoslatara/dbt-beyond-the-basics/actions/caches).
 
-dbt repositories can benefit from caching in two areas:
+dbt repositories can benefit from caching in the python virtual environment stored in `.venv`.
 
-1. The python virtual environment stored in `.venv`.
-1. The Poetry executable stored in `/home/runner/.local`.
-
-Both of these are the result of work we perform in almost every GitHub workflow run. And both of these can be easily invalidated when necessary; the virtual environment when the contents of `poetry.lock` change and the Poetry executable when the version of Poetry changes.
+This is the result of work we perform in almost every GitHub workflow run. And this can be easily invalidated when necessary; the virtual environment when the contents of `uv.lock` change.
 
 To enable caching, let's take an example workflow snippet:
 
 ```yaml
-
 env:
-  POETRY_VERSION: "2.0.1"
+  UV_VERSION: "0.9.24"
 
 jobs:
   auto-update:
@@ -432,43 +426,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
-        id: setup-python
-
-      - name: Load cached Poetry installation
-        id: cached-poetry
-        uses: actions/cache@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
         with:
-              path: /home/runner/.local
-              key: poetry-cache-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ env.POETRY_VERSION }}
+          enable-cache: true
+          version: ${{ env.UV_VERSION }}
 
-      - name: Install Poetry
-        if: steps.cached-poetry.outputs.cache-hit != 'true'
-        uses: snok/install-poetry@v1
-        with:
-              installer-parallel: true
-              version: ${{ env.POETRY_VERSION }}
-              virtualenvs-create: false
-              virtualenvs-in-project: true
-
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v4
-        with:
-              path: .venv
-              key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
-
+          enable-cache: true
       - name: Install python packages
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-ansi
+        run: uv sync
 
       - name: Whatever else we want to do
         run: ...
 ```
 
-Every cache requires a unique identifier, this `key` should contain a reference to the parameters the cache is dependent upon. For the Poetry cache, this is the Poetry version and the python version and the operating system. For the virtual environment cache, this is the operating system, the python version and the hash of the `poetry.lock` file. By combining these parameters we create a key that allows us to check if a suitable cache already exists, and if not, create a new one.
-
-If a cache is found, then it is loaded. We can this skip subsequent steps like installing Poetry by adding `if` condition to the step that would have performed that work.
+The `astral-sh/setup-uv` action handles the installation of uv and the caching of the virtual environment. It automatically generates a cache key based on the `uv.lock` file and the OS.
 
 # Others
 
