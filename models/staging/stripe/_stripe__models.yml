@@ -17,7 +17,8 @@ models:
         description: The payment method used for the payment
         tests:
           - accepted_values:
-              values: ['credit_card', 'coupon', 'bank_transfer', 'gift_card']
+              arguments:
+                values: ['credit_card', 'coupon', 'bank_transfer', 'gift_card']
           - not_null
       - name: is_voucher
         description: Whether the payment is a voucher
