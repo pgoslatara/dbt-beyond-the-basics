@@ -113,7 +113,7 @@ jobs:
       - name: Generate test coverage report
         id: dbt-test-coverage-report
         run: |
-          uv run dbt-coverage compute test --cov-report coverage-test.json --cov-format markdown >> coverage-test.md
+          uv run dbt-coverage compute test --cov-report coverage-test.json --output-format markdown >> coverage-test.md
           sed -i '/# Coverage report/c\# Test coverage report.' coverage-test.md
 
       - uses: mshick/add-pr-comment@v2
