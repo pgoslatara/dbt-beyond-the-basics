@@ -12,15 +12,15 @@ models:
       - name: first_name
         description: First name of the customer
         tests:
-        - not_null
+          - not_null
       - name: last_name
         description: Last name of the customer
         tests:
-        - not_null
+          - not_null
       - name: full_name
         description: Full name of the customer
         tests:
-        - not_null
+          - not_null
 
   - name: stg_jaffle_shop__orders
     description: Table of sample order data from Jaffle shop project
@@ -37,10 +37,11 @@ models:
       - name: order_date
         description: Date of the order
         tests:
-        - not_null
+          - not_null
       - name: status
         description: Status of the order
         tests:
           - accepted_values:
-              values: ['placed', 'shipped', 'completed', 'return_pending', 'returned']
+              arguments:
+                values: ['placed', 'shipped', 'completed', 'return_pending', 'returned']
           - not_null

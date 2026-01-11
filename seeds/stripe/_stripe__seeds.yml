@@ -1,27 +1,28 @@
-
 version: 2
 
 # Source: https://github.com/dbt-labs/jaffle_shop/tree/main/seeds
 seeds:
-    - name: seed_stripe__payments
-      description: Sample payments
-      pre-hook:
-        - "SELECT 1 AS id"
-      columns:
-          - name: id
-            description: The primary key for the table
-            tests:
-                - unique
-                - not_null
-          - name: order_id
-            description: Foreign key to the orders table
-            tests:
-              - not_null
-          - name: payment_method
-            description: The payment method used
-            tests:
-              - not_null
-          - name: amount
-            description: The amount of the payment in cents
-            tests:
-              - not_null
+  - name: seed_stripe__payments
+    description: Sample payments
+    columns:
+      - name: id
+        description: The primary key for the table
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: Foreign key to the orders table
+        tests:
+          - not_null
+      - name: payment_method
+        description: The payment method used
+        tests:
+          - not_null
+      - name: amount
+        description: The amount of the payment in cents
+        tests:
+          - not_null
+    config:
+      meta:
+        pre-hook:
+          - "SELECT 1 AS id"
