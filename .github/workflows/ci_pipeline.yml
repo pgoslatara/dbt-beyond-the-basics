@@ -104,7 +104,7 @@ jobs:
           uv run dbt-coverage compute doc --cov-report coverage-doc.json --output-format markdown >> coverage-doc.md
           sed -i '/# Coverage report/c\# Doc coverage report.' coverage-doc.md
 
-      - uses: mshick/add-pr-comment@v2
+      - uses: mshick/add-pr-comment@v3
         with:
             message-path: coverage-doc.md
             message-id: dbt-docs-coverage-report
@@ -116,7 +116,7 @@ jobs:
           uv run dbt-coverage compute test --cov-report coverage-test.json --output-format markdown >> coverage-test.md
           sed -i '/# Coverage report/c\# Test coverage report.' coverage-test.md
 
-      - uses: mshick/add-pr-comment@v2
+      - uses: mshick/add-pr-comment@v3
         with:
             message-path: coverage-test.md
             message-id: dbt-test-coverage-report
