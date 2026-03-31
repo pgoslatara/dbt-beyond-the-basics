@@ -34,6 +34,8 @@ A repository demonstrating advanced use cases of dbt in the following areas:
     - [Running dbt from python](#running-dbt-from-python)
     - [Conferences](#conferences)
 
+- [References](#references)
+
 See something incorrect, open an [issue](https://github.com/pgoslatara/dbt-beyond-the-basics/issues/new)!
 
 Want to see something else included, open an [issue](https://github.com/pgoslatara/dbt-beyond-the-basics/issues/new) 😉!
@@ -487,3 +489,7 @@ In version 1.5, dbt introduced [programmatic invocations](https://docs.getdbt.co
 This repository accompanies some conference talks:
 - [NL dbt meetup: 2nd Edition](https://www.meetup.com/amsterdam-dbt-meetup/events/293640417/): "CI for dbt: Beyond the basics!", slides available [here](https://docs.google.com/presentation/d/1Y5fx4h97IY0wpsutt92nPLO1UDUcrq6YdVKt-UuL93c/edit#slide=id.p).
 - [MDSFest](https://www.linkedin.com/events/7091868349487353856/): "CI for dbt: Beyond the basics!", slides available [here](https://docs.google.com/presentation/d/1M0475jIX41uxT-nLPWlymUkstuUzkq-LppZqT_o759Q/edit#slide=id.g260e469f8e9_0_7), video available [here](https://www.youtube.com/watch?v=bRKk6F07G58).
+
+# References
+
+- [GitLab dbt Guide](https://handbook.gitlab.com/handbook/enterprise-data/platform/dbt-guide/): a comprehensive and regularly updated guide covering GitLab's approach to dbt, including project structure, style conventions, testing strategies, and CI/CD patterns.
