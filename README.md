@@ -51,7 +51,7 @@ Continuous Integration (CI) is the process of codifying standards, these range f
 To install `pre-commit` run:
 
 ```shell
-pip install pre-commit
+uv pip install pre-commit
 ```
 
 Then install the hooks specified in your `.pre-commit-config.yaml` file:
@@ -94,7 +94,7 @@ For an example `.pre-commit-config.yaml` file, see the [file](https://github.com
 
 Most pre-commit hooks are "isolated" hooks in the sense that pre-commit creates a dedicated, isolated environment for each hook to run in. In effect this means that the python environment the hook runs in is not the same as the python environment you are working in locally.
 
-For example, you `pip install` the `sqlfmt` package and your local environment now has version `0.23.0` installed. You may run `sqlfmt models` to format your dbt models after making some changes. When you are ready to commit your changes pre-commit also runs `sqlfmt`, however it will use a different python environment to do so, potentially resulting in conflicting changes.
+For example, you `uv pip install` the `sqlfmt` package and your local environment now has version `0.23.0` installed. You may run `sqlfmt models` to format your dbt models after making some changes. When you are ready to commit your changes pre-commit also runs `sqlfmt`, however it will use a different python environment to do so, potentially resulting in conflicting changes.
 
 One way to avoid this is to use `local` hooks. These are hooks that run in the same python environment that you are developing in. For example, this "isolated" hook:
 
@@ -139,7 +139,7 @@ To install `prek`:
 brew install j178/tap/prek
 
 # Or via pip / uv
-pip install prek
+uv pip install prek
 ```
 
 Then install the hooks (same command as `pre-commit`):
@@ -240,7 +240,7 @@ Running `dbt-bouncer` involves three steps:
 
 1. Install the package:
     ```bash
-    pip install dbt-bouncer
+    uv pip install dbt-bouncer
     ```
 
 2. Create a `dbt-bouncer.yml` configuration file, see [dbt-bouncer.yml](./dbt-bouncer.yml) for an example. This file lists all the checks we want to apply to this dbt project.
