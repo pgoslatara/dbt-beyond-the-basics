@@ -43,7 +43,7 @@ jobs:
       - name: pre-commit run -a
         run: SKIP=dbt-compile,dbt-docs-generate uv run pre-commit run -a
 
-      - uses: EndBug/add-and-commit@v9
+      - uses: EndBug/add-and-commit@v10
         id: add-and-commit
         with:
             author_name: Github Actions
