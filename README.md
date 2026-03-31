@@ -120,6 +120,40 @@ hooks:
 
 The primary advantage of this change is that your local environment and pre-commit are now configured to use the same python environment and the same `sqlfmt` version. A tangential benefit is that updates to packages used in pre-commit now only require updating of the python package. Previously this would have required updating both the python package and the pre-commit hook, a process which if not done correctly could result in a mis-matched setup.
 
+### prek: a faster alternative to pre-commit
+
+[prek](https://github.com/j178/prek) is a drop-in replacement for `pre-commit`, re-engineered in Rust. It reads the same `.pre-commit-config.yaml` files so switching requires no configuration changes. Key advantages include:
+
+- **Speed**: prek executes significantly faster than `pre-commit`. Repositories are cloned in parallel, hooks are installed in parallel when their dependencies are disjoint, and hooks can run concurrently by priority.
+- **No Python dependency**: prek ships as a single binary — no need to install Python or any other runtime. It automatically installs the required Python version and creates a virtual environment for hooks that need one.
+- **Lower disk usage**: prek uses approximately half the disk space of `pre-commit` for cached hook environments.
+- **Monorepo support**: built-in support for workspaces where each subproject can have its own `.pre-commit-config.yaml` file.
+- **Built-in hooks**: prek implements several common hooks natively in Rust, making them faster than their Python counterparts.
+
+To install `prek`:
+
+```shell
+# macOS / Linux
+brew install j178/tap/prek
+
+# Or via pip / uv
+pip install prek
+```
+
+Then install the hooks (same command as `pre-commit`):
+
+```shell
+prek install
+```
+
+Run hooks manually with:
+
+```shell
+prek run --all-files
+```
+
+prek is already used by projects such as CPython, Apache Airflow, and FastAPI. For more details, see the [prek documentation](https://prek.j178.dev/).
+
 ## dbt Artifacts and Pytest
 
 dbt produces 4 artifacts in the form of JSON files:
