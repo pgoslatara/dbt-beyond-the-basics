@@ -25,7 +25,7 @@ Repository = "https://github.com/pgoslatara/dbt-beyond-the-basics"
 dev = [
     "autoflake",
     "black",
-    "dbt-artifacts-parser>=0.8",
+    "dbt-artifacts-parser>=0.13.0",
     "dbt-bouncer>=1.11.0",
     "dbt-coverage",
     "dbterd",
