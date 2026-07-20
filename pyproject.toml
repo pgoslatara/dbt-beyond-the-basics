@@ -26,7 +26,7 @@ dev = [
     "autoflake",
     "black",
     "dbt-artifacts-parser>=0.8",
-    "dbt-bouncer>=1.11.0",
+    "dbt-bouncer>=3.0.2",
     "dbt-coverage",
     "dbterd",
     "duckdb",
